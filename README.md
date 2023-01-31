@@ -4,6 +4,7 @@ By: <br>
 [![Developers Tag]( https://img.shields.io/badge/Developer-andrei2timo-blue.svg )]( https://github.com/andrei2timo ) <br>
 [![Developers Tag]( https://img.shields.io/badge/Developer-alamerton-blue.svg )]( https://github.com/alamerton )<br>
 [![Developers Tag]( https://img.shields.io/badge/Developer-snayak-blue.svg )]( https://github.com/Hyperoid29 )<br>
+[![Developers Tag]( https://img.shields.io/badge/Developer-ChristianECDawson-blue.svg )]( https://github.com/ChristianECDawson )<br>
 The UWEFlix website is developed using a Django virtual environment, and is intended to replace the existing paper system.
 
 ## Installation instructions - Linux
