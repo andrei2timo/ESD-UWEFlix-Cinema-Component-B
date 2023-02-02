@@ -1,0 +1,62 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Showings
+{% endblock %}
+{% block content %}
+
+<style>
+    form {
+        display: inline-block;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    h6, p {
+        color: white;
+    }
+
+    h2, h5, p, .col-lg-4 {
+        padding-left: 15px;
+    }
+
+    .showing-box {
+        padding-left: 10px;
+        padding-top: 10px;
+    }
+
+</style>
+
+<div class="row">
+    <div class="center" style="max-width: 400px;">
+        <img class="thumbnail" src="{{ film.image.url }}">
+        <div class="box-element bg-dark film">
+            <h6><strong>{{film.title}}</strong></h6>
+            <hr style="color:white;">
+            <p>{{film.trailer_desc}}</p>
+        </div>
+    </div>
+    <div class="showings">
+        <hr>
+        <h3>Showings for {{film.title}}</h3>        
+        {% for showing in showings %}
+        {% if showing.remaining_tickets > 0 %}
+        <div class ="showing-box">
+            <div class="box-element bg-dark film">
+                <h6><strong>{{ showing.time | date:'j M Y' }}</strong></h6>
+                <hr style="color:white;">
+                <div>            
+                    <a class="btn btn-warning add-btn" href="{% url 'payment' showing.pk %}">
+                        <h6 style="color:black;"><strong>{{ showing.time | time:'G:i'}}</strong></h6>
+                        <h6 style="color:black;"><strong>Screen {{showing.screen.id}}</strong></h6>
+                    </a>
+                </div> 
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

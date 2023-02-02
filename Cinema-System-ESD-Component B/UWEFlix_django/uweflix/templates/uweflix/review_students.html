@@ -1,0 +1,129 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Review Students
+{% endblock %}
+{% block content %}
+<style>
+
+    .student_list {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .student_list th, td {
+	border: 1px solid;
+	text-align: left;
+	padding-right: 15px;
+    }
+
+    .student_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .dropdown {
+        width: 100px;
+        padding: 5px;
+        margin: 10px 0; 
+        border-radius: 12px;
+        font-weight: bold;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+    
+
+    .selectButton {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+    .acceptDenyButton {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+    .flex-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flex-container > div {
+        margin: 5px;
+        padding: 20px;
+        font-size: 20px;
+        
+    }
+
+</style>
+    <center>
+    <h1>Approve Students</h1>
+    
+    {% if students %}
+        <form method="POST" name="changeStudent">
+            {% csrf_token %}
+            <select name="ReviewStudentForm" class="dropdown">
+                {% for student in students %}
+                    {% if student.id == urlID%}
+                        <option value="{{student.id}}" selected>{{student.username}}</option>
+                    {%else %}
+                        <option value="{{student.id}}">{{student.username}}</option>
+                    {%endif%}
+                {%endfor%}   
+                <input type="hidden" name="name" value="changeStudent">
+                <input type="submit" value="Search" name="changeStudent" class="selectButton"/>
+            </select> 
+        </form>
+        <hr/>
+        <table class="student_list">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ chosenStudent.id }}</td>
+                    <td>{{ chosenStudent.username }}</td>
+                    <td>{{ chosenStudent.email }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="flex-container">
+            <div><form method="POST" name="acceptStudent">
+                {% csrf_token %}
+                    <input type="hidden" name="name" value="acceptStudent">
+                    <input type="submit" name="acceptStudent" value="Accept" class="acceptDenyButton" />
+            </form></div>
+            <div><form method="POST" name="denyStudent">
+                {% csrf_token %}
+                    <input type="hidden" name="name" value="denyStudent">
+                    <input type="submit" value="Deny" name="denyStudents" class="acceptDenyButton"/>     
+            </form></div> 
+          </div>
+        
+    {%else%}
+        <hr/>
+        <h3>No Student Applications!</h3>
+    {% endif %}
+
+</center>
+{% endblock %}

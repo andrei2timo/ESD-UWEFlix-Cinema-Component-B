@@ -1,0 +1,34 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Register
+{% endblock %}
+{% block content %}
+<h1>Register</h1>
+<hr/>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true
+      });
+    } );
+</script>
+<form method='POST' class="form-area" action="" autocomplete="off">
+    {% csrf_token %}
+    <p>First Name: {{ form.first_name }}</p>
+    <p>Last Name: {{ form.last_name }}</p>
+    <p>Username: {{ form.username }}</p>
+    <p>Email: {{ form.email }}</p>
+    <p>Password: {{ form.password1 }}</p>
+    <p>Confirm Password: {{ form.password2 }}</p>
+    <p>Date of Birth: {{ customer_form.dob }}</p>
+    <br/>
+    <button type="submit" class="btn btn-warning">Register</button>
+</form>
+<br/>
+{% if confirm %}
+{{ confirm }}
+{% endif %}
+{% endblock %}

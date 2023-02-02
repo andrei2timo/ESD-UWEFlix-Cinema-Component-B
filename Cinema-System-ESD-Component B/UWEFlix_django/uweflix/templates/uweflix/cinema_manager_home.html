@@ -1,0 +1,126 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Cinema Manager Home Page
+{% endblock %}
+{% block content %}
+
+<style>
+    
+    .flex-container {
+        display: flex;
+        margin-top: 50px;
+        
+    }
+    
+    h2,h3 {
+      color: white;
+    }
+    
+    .flex-child {
+        flex: 1;
+        background: #212529;
+        margin-right: 20px;
+        margin-left: 20px; 
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 0 1.5px 1.5px rgba(0, 0, 0 ,0.8);
+        
+    }  
+
+    .cinemaManagerHomeButtons {
+        width: 250px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        color: black;
+        box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
+    }   
+</style>
+
+<div class="flex-container">
+
+    <div class="flex-child">
+      <h2>Manage Films</h2></br>
+      <h3>Add/delete films from the website.</h3></br>
+      <a href="{% url 'add_film' %}">
+        <input type="button" value="Manage Films" class="cinemaManagerHomeButtons" />
+     </a>
+    </div>
+    
+    <div class="flex-child">
+        <h2>Cancellation Requests</h2></br>
+        <h3>See all cancellation requests here.</h3></br>
+        <a href="{% url 'approve_cancellations' %}">
+          <input type="button" value="View Cancellations" class="cinemaManagerHomeButtons" />
+       </a>
+    </div>
+
+    <div class="flex-child">
+      <h2>Toggle Covid Restrictions</h2></br>
+      <h3>Social Distancing: {{restrictions_bool}}</h3></br>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Toggle", class="cinemaManagerHomeButtons">
+        </form>
+    </div>
+    
+</div>
+
+<div class="flex-container">
+
+    <div class="flex-child">
+      <h2>Add Showing</h2></br>
+      <h3>Add a New Showing for Films!</h3></br>
+      <a href="{% url 'add_showing' %}">
+        <input type="button" value="Add Showing" class="cinemaManagerHomeButtons" />
+     </a>
+    </div>
+    
+    <div class="flex-child">
+        <h2>Add Screen</h2></br>
+        <h3>Add in a New Screen!</h3></br>
+        <a href="{% url 'add_screen' %}">
+          <input type="button" value="Add Screen" class="cinemaManagerHomeButtons" />
+       </a>
+    </div>
+
+    <div class="flex-child">
+      <h2>Change Price</h2></br>
+      <h3>Change the Prices of your Tickets! </h3></br>
+      <a href="{%url 'change_ticket_prices' %}">
+        <input type="button" value="Change Price" class="cinemaManagerHomeButtons" />
+     </a>
+    </div>
+    
+</div>
+
+<div class="flex-container">
+
+    <div class="flex-child">
+      <h2>Add Club</h2></br>
+      <h3>Register a New Student Club!</h3></br>
+      <a href="{%url 'add_club' %}">
+        <input type="button" value="Add Club" class="cinemaManagerHomeButtons" />
+     </a>
+    </div>
+    
+    <div class="flex-child">
+        <h2>Add Club Rep</h2></br>
+        <h3>Add in a New Rep for Clubs!</h3></br>
+        <a href="{%url 'add_rep' %}">
+          <input type="button" value="Add Club Rep" class="cinemaManagerHomeButtons" />
+       </a>
+    </div>
+
+    <div class="flex-child">
+      <h2>Review Student Requests</h2></br>
+      <h3>Review Student Account Requests!</h3></br>
+      <a href={% url 'review_students' 0%}>
+        <input type="button" value="Review" class="cinemaManagerHomeButtons" />
+     </a>
+    </div>
+    
+</div>
+
+{% endblock %}

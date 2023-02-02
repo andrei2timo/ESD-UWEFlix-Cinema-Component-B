@@ -1,0 +1,17 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Add Club Rep Successful
+{% endblock %}
+{% block content %}
+<style>
+    .success-string {
+        color: green;
+    }
+</style>
+<h1>Club Rep Creation Successful</h1>
+<p class="success-string">Your Club Rep has been created successfully. Here are their details:</p>
+<br/>
+<p>Username: {{ request.session.new_cr }} <br/> Password: As entered <br/><br/> Club: {{ request.session.new_club }}</p>
+<a class="btn btn-warning" href="/add_rep">Add another Rep</a>
+{% endblock %}

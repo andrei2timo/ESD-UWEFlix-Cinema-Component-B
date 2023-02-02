@@ -1,0 +1,14 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Register a Club Rep
+{% endblock %}
+{% block content %}
+<h2>Register a Club Rep</h2>
+<form method='POST' action="">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ cr_form.as_p }}
+    <input type="submit" name="Create Club Rep">
+</form>
+{% endblock %}

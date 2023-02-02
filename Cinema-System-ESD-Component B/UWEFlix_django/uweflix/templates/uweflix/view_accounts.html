@@ -1,0 +1,11 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+View Accounts
+{% endblock %}
+{% block content %}
+<h1>View Accounts</h1>
+
+<a class="btn btn-warning" href="{% url 'customer_statements' %}">Customer Statements</a>
+<a class="btn btn-warning" href="{% url 'daily_transactions' %}">Daily Transactions</a>
+{% endblock %}

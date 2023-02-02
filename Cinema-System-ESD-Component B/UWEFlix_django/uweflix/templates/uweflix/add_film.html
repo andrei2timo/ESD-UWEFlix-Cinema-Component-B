@@ -1,0 +1,56 @@
+{% extends "uweflix/layout.html" %}
+{% block title %}
+    Add a film
+{% endblock %}
+{% block content %}
+<h1>Add Film</h1>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="box-element" id ="form-wrapper">
+            <form id="form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div id="film-info">
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="title" placeholder="Title.." maxlength="100">
+                    </div>
+                    <div class="form-field">
+                        <input required list="ages" class="form-control" name="age_rating" placeholder="Age Rating..">
+                    </div>
+                    <datalist id="ages">
+                        <option value="U">
+                        <option value="PG">
+                        <option value="12">
+                        <option value="12A">
+                        <option value="15">
+                        <option value="18">
+                    </datalist>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="duration" placeholder="Duration.." maxlength="3">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="trailer_desc" placeholder="Trailer Description.." maxlength="500">
+                    </div>
+                    <div class="form-field">
+                        (Optional) Image: <input class="form-control" type="file" accept="image/*" name="image">
+                    </div>
+                </div>
+                <hr>
+                <input type="submit" value="Add Film" class="btn btn-warning">
+            </form>
+
+        </div>
+        <br/>
+        <h2>Delete Film</h2>
+        <br/>
+            <div class="box-element" id ="form-wrapper">
+                <form id="form" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <hr>
+                <input type="submit" name="delete_film" value="Delete Film" class="btn btn-warning">
+               </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    

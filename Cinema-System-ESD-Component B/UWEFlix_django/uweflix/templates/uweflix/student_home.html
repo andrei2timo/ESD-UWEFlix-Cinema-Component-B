@@ -1,0 +1,82 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Student Home Page
+{% endblock %}
+{% block content %}
+
+<style>
+    
+    .flex-container {
+        display: flex;
+        margin-top: 50px;
+        
+    }
+    
+    h2,h3 {
+      color: white;
+    }
+    
+    .flex-child {
+        flex: 1;
+        background: #212529;
+        margin-right: 20px;
+        margin-left: 20px; 
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 0 1.5px 1.5px rgba(0, 0, 0 ,0.8);
+        
+    }  
+
+    .studentHomeButtons {
+        width: 250px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        color: black;
+        box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
+    } 
+
+    .extraHeight {
+        height: 125px;
+    }
+
+    
+    
+</style>
+
+<div class="flex-container">
+
+    <div class="flex-child">
+      <div class="extraHeight"></div>
+      <h2>Book Film</h2></br>
+      <h3>Book a viewing!</h3></br>
+      <a href="{% url 'viewings' %}">
+        <input type="button" value="Book" class="studentHomeButtons" />
+     </a>
+     <div class="extraHeight"></div>
+    </div>
+
+    <div class="flex-child">
+      <div class="extraHeight"></div>
+      <h2>Topup Credit</h2></br>
+      <h3>£{{ request.session.credit|floatformat:2 }} left!</h3></br>
+      <a href="{% url 'topup' %}">
+        <input type="button" value="Topup" class="studentHomeButtons" />
+     </a>
+     <div class="extraHeight"></div>
+    </div>
+
+    <div class="flex-child">
+      <div class="extraHeight"></div>
+      <h2>Order History</h2></br>
+      <h3>View & cancel previous transactions.</h3></br>
+      <a href="{% url 'request_cancellation' %}">
+        <input type="button" value="View Transactions" class="studentHomeButtons" />
+     </a>
+     <div class="extraHeight"></div>
+    </div>
+    
+  </div>
+
+{% endblock %}

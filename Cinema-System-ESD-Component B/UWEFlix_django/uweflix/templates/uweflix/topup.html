@@ -1,0 +1,110 @@
+{% extends "uweflix/layout.html" %}
+{% block title %}
+Topup
+{% endblock %}
+{% block content %}
+
+<style>
+    h1 {
+        text-align: center;
+        margin: 20px;
+    }
+    #topupAmount {
+        text-align: center;
+        margin: 10px;
+        font-size: 50px;
+    }
+    .topupAmountButton {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+    .topupAmountButton::placeholder {
+        color: black;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    .flex-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flex-container > div {
+        margin: 10px;
+        padding: 20px;
+        font-size: 30px;
+        
+    }
+    .submitTopUp {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+</style>
+
+<h1>Topup Credit</h1>
+<p id = "topupAmount">£0.00</p>
+
+<div class="flex-container">
+  <div><button onclick="change_topupAmount('5.00')" class="topupAmountButton">£5.00</button></div>
+  <div><button onclick="change_topupAmount('10.00')" class="topupAmountButton">£10.00</button></div>
+  <div><button onclick="change_topupAmount('20.00')" class="topupAmountButton">£20.00</button></div>  
+</div>
+
+<div class="flex-container">
+  <div><button onclick="change_topupAmount('50.00')" class="topupAmountButton">£50.00</button></div>
+  <div><button onclick="change_topupAmount('100.00')" class="topupAmountButton">£100.00</button></div>
+  <div><input type = "text", name = "customTopUpAmount", class="topupAmountButton", placeholder="Custom"></div>
+  <div><button onclick="change_topupAmount('Custom')" class="topupAmountButton">Confirm</button></div>  
+</div>
+
+
+<div class="flex-container">
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="topUpValue" id="topUpValueForm" />
+        <div><button class="submitTopUp">Submit</button></div>  
+    </form>
+</div>
+
+
+
+
+
+<script>
+
+function change_topupAmount(price) {
+    if (price == "Custom") {
+        
+        var custom = parseFloat(document.getElementsByName("customTopUpAmount")[0].value, 10);
+        if (isNaN(custom) != true) {
+            document.getElementById("topupAmount").innerHTML = "£" + custom.toFixed(2);
+            document.getElementById("topUpValueForm").value = custom.toFixed(2);
+        }
+        
+    } else {
+        document.getElementById("topupAmount").innerHTML = "£" + price;
+        document.getElementById("topUpValueForm").value = price;
+    }
+    
+}
+
+</script>
+
+
+{% endblock %}

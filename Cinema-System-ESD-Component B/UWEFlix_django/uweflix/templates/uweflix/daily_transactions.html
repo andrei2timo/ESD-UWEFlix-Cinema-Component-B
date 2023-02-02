@@ -1,0 +1,85 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Customer Statements
+{% endblock %}
+{% block content %}
+<style>
+
+    .transaction_list {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .transaction_list th, td {
+	border: 1px solid;
+	text-align: left;
+	padding-right: 15px;
+    }
+
+    .transaction_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+</style>
+    <center>
+    <h1>Customer Statements</h1>
+    <hr/>
+    {% if transaction_list %}
+        <h3>All transactions for {{ selected_date | date:'d/m/Y'}}:</h3>
+        <br/>
+        <table class="transaction_list">
+            <thead>
+                <tr>
+                    <th>Transaction #</th>
+                    <th>Date</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Cost</th>
+                    <th>Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transaction_list %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.date | date:'d M Y' }}</td>
+                    <td>{{ transaction.customer.user.first_name }}</td>
+                    <td>{{ transaction.customer.user.last_name }}</td>
+                    <td>£{{ transaction.cost | floatformat:2 }}</td>
+                    <td>{{ transaction.is_settled }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ title_text }}</p>
+    {% endif %}
+    <hr/>
+    <script>
+        $( function() {
+          $( "#id_date" ).datepicker({
+              dateFormat: "yy-mm-dd"
+          });
+        } );
+    </script>
+    <form action="{% url 'daily_transactions' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="form-area">
+        <div class="form-field">
+        Date: {{ form.date }}
+        </div>
+        <button name="search" type="submit" class="btn btn-warning">Search</button>
+        </div>
+        <br/>
+        <b>or:</b>
+        <br/>
+        <br/>
+        <button name="today" type="submit" class="btn btn-warning">Show Today's Transactions</button>
+    </form>
+    </center>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Customer Statements
+{% endblock %}
+{% block content %}
+<style>
+
+    .transaction_list {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .transaction_list th, td {
+	border: 1px solid;
+	text-align: left;
+	padding-right: 15px;
+    }
+
+    .transaction_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+</style>
+    <center>
+    <h1>Customer Statements</h1>
+    <hr/>
+    {% if transaction_list %}
+        <h3>Transaction Statement for Club Rep ({{club_rep_num}}):</h3>
+        <br/>
+        <table class="transaction_list">
+            <thead>
+                <tr>
+                    <th>Transaction #</th>
+                    <th>Date</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Cost</th>
+                    <th>Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transaction_list %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.date | date:'d M Y' }}</td>
+                    <td>{{ transaction.customer.user.first_name }}</td>
+                    <td>{{ transaction.customer.user.last_name }}</td>
+                    <td>£{{ transaction.cost | floatformat:2 }}</td>
+                    <td>{{ transaction.is_settled }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Please select an account statement to view:</p>
+    {% endif %}
+    <hr/>
+    <form action="{% url 'customer_statements' %}" method="post">
+        {% csrf_token %}
+        <div class="form-area">
+        <div class="form-field">
+        Select a Club Rep to view: {{ form.clubrep_choice }}
+        </div>
+        <div class="form-field">
+        Statement Type: {{ form.timerange_choice }}
+        </div>
+        <br/>
+        <br/>
+        <button type="submit" class="btn btn-warning">Search</button>
+        </div>
+    </form>
+    </center>
+{% endblock %}

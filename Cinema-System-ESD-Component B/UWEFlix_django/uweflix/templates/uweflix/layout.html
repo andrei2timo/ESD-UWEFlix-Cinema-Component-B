@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'uweflix/site.css' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <script type="text/javascript" src="{{ STATIC_URL }} /static/js/jquery-3.6.0.js"></script>
+    <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+    <script type="text/javascript" src="{{ STATIC_URL }} https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="{{ STATIC_URL }} /static/js/rango-jquery.js"></script>
+</head>
+
+<body>
+<!-- <div class="navbar">
+    <a href="{% url 'home' %}" class="navbar-brand">Home</a>
+    <a href="{% url 'viewings' %}" class="navbar-item">Viewings</a>
+</div> -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'viewings' %}">
+            <img src="{% static 'uweflix/images/logo.png' %}" height="50" width="140" style="margin-left: 20px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                {% if request.session.user_group == "Club Rep"%}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'settle_payments' %}">Settle Payments</a>
+                    </li>
+                {% elif request.session.user_group == "Cinema Manager" %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'add_film' %}">Manage Films</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'add_screen' %}">Add Screen</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'add_showing' %}">Add Showing</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'change_ticket_prices' %}">Change Ticket Prices</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'add_club' %}">Add Club</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'add_rep' %}">Add Club Rep</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'approve_cancellations' %}">Cancellations</a>
+                </li>
+                {% elif request.session.user_group == "Account Manager" %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'daily_transactions' %}">Transactions</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'customer_statements' %}">Customer Statements</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'set_payment' %}">Set Payment Details</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'club_discount' %}">Club Discount</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'account_modify' %}">Amend Account</a>
+                </li>                                
+                {% endif %}
+            </ul>
+            {% if request.session.user_id is None %}
+            <div class="topnav-right">
+                <a class="nav-link" href="{% url 'registerPage' %}">Register</a>
+            </div>
+            <div class="form-inline my-2 my-lg-0">
+                <a href="{% url 'login' %}"class="btn btn-warning">Login</a>
+            </div>
+            {% else %}
+                {% if request.session.user_group == "Student" or request.session.user_group == "Club Rep" %}
+                <div class="topnav-right">
+                    <a class="nav-link" href="{% url 'topup' %}">£{{ request.session.credit|floatformat:2 }}</a>
+                </div>
+                {% endif %}
+                <div class="topnav-right">
+                    {% if request.session.user_group == "Account Manager" %}
+                    <a class="navbar-brand" href="{% url 'am_home' %}">Settings</a>
+                    {% elif request.session.user_group == "Cinema Manager" %}
+                    <a class="navbar-brand" href="{% url 'cinema_manager_home' %}">Settings</a>
+                    {% elif request.session.user_group == "Club Rep" %}
+                    <a class="navbar-brand" href="{% url 'club_rep_home' %}">Settings</a>
+                    {% elif request.session.user_group == "Student" %}
+                    <a class="navbar-brand" href="{% url 'student_home' %}">Settings</a>
+                    {% endif %}
+                </div>
+            <div class="form-inline my-2 my-lg-0">
+                <a href="{% url 'logout' %}"class="btn btn-warning">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="flex-wrapper">
+    <div class="body-content">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <br/>
+    <div class="footer">
+        <footer class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <hr/>
+            <div class="form-area" style="margin-left: 20px;">
+                <p class="navbar-brand">Options:</p>
+                <p style="color: lightgray;">Colour-blind friendly mode:
+                <label class="switch">
+                    <input type="checkbox" id="colourBlindBox" onclick="setColourBlindOptions()">
+                    <span class="slider round"></span>
+                </label>
+                </p>
+                <p style="color: lightgray;">Font size: 
+                    <input type="button" id="increase" class="btn btn-success" value=" + ">
+                    
+                    <input type="button" id="decrease" class="btn btn-danger" value=" - "/></p>
+                <p class="navbar-brand">© UWEFlix 2023</p>
+            </div>
+        </footer>
+    </div>
+</div>
+    <script>
+        var prevColour = document.body.style.background;
+        var prevText = document.body.style.color;
+        var prevTitleH1 = document.getElementsByTagName("h1")[0].style.color;
+        var prevTitleH2 = document.getElementsByTagName("h2")[0].style.color;
+        var prevTitleH3 = document.getElementsByTagName("h3")[0].style.color;
+        var prevTitleH4 = document.getElementsByTagName("h4")[0].style.color;
+        var prevTitleH5 = document.getElementsByTagName("h5")[0].style.color;
+        var prevTitleH6 = document.getElementsByTagName("h6")[0].style.color;
+        var titleColours = ["white", "white", "white", "white", "white", "white"];
+        function setColourBlindOptions() {
+            var h1Tags = document.getElementsByTagName("h1");
+            var h2Tags = document.getElementsByTagName("h2");
+            var h3Tags = document.getElementsByTagName("h3");
+            var h4Tags = document.getElementsByTagName("h4");
+            var h5Tags = document.getElementsByTagName("h5");
+            var h6Tags = document.getElementsByTagName("h6");
+            var titleTags = [h1Tags, h2Tags, h3Tags, h4Tags, h5Tags, h6Tags];
+            var checkbox = document.getElementById("colourBlindBox");
+            if (checkbox.checked == true) {
+                document.body.style.background = "#6DEDE2";
+                document.body.style.color = "black";
+                for(var i = 0; i < titleTags.length; i++) {
+                    for(var j = 0; j < titleTags[i].length; j++) {
+                        titleTags[i][j].style.color = "#755508";
+                    }
+                }
+            } else {
+                document.body.style.background = prevColour;
+                document.body.style.color = prevText;
+                for(var i = 0; i < titleTags.length; i++) {
+                    for(var j = 0; j < titleTags[i].length; j++) {
+                        titleTags[i][j].style.color = "#4D4D4D";
+                    }
+                }
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+        var originalSize = $('div').css('font-size');
+        // reset
+        $("#resetMe").click(function(){
+        $('div').css('font-size', originalSize);
+        });
+        
+        // Increase Font Size
+        $("#increase").click(function(){
+        var currentSize = $('div').css('font-size');
+        var currentSize = parseFloat(currentSize)*1.2;
+        $('div').css('font-size', currentSize);
+        return false;
+        });
+
+        // Decrease Font Size
+        $("#decrease").click(function(){
+            var currentFontSize = $('div').css('font-size');
+            var currentSize = $('div').css('font-size');
+            var currentSize = parseFloat(currentSize)*0.8;
+            $('div').css('font-size', currentSize);
+            return false;
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends "uweflix/layout.html" %}
+{% block title %}
+Change Ticket Prices
+{% endblock %}
+{% block content %}
+<h1>Change Ticket Prices</h1>
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-area">
+        <hr/>
+        <div class="form-group">
+        {{form.as_p}}
+        </div>
+        <br/>
+        <br/>
+        <hr/>
+    </div>
+    <div class="form-group">
+        <input id="confirm-btn" class="btn btn-warning" type="submit" value="Change">
+    </div>
+</form>
+{% if confirm %}
+{{ confirm }}
+{% endif %}
+{% endblock %}

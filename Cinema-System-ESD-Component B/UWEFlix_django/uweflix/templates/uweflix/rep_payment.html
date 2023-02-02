@@ -1,0 +1,74 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Rep Payment
+{% endblock %}
+{% block content %}
+<style>
+    form {
+        display: inline-block;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2, h3, h5, p, input {
+        padding-left: 15px;
+    }
+
+</style>
+<br/>
+<h1>Confirm your Booking</h1>
+<br/>
+<body>
+    <h2>Order summary:</h2>
+    <hr/>
+
+    <h3>Film:</h3>
+        <p>
+           <b>{{ showing.film.title }}</b><br/>
+           Duration: {{ showing.film.duration }} minutes<br/>
+           Age rating: {{ showing.film.age_rating }}
+           {% if showing.film.age_rating == '18' %}
+                (Please bring ID with you to verify your age!)
+           {% endif %}
+        </p>
+        <br/>
+        <h3>Showing:</h3>
+        <p>Screen {{ showing.screen.id }}<br/>{{ showing.time | date:'j M Y' }} at {{ showing.time | time:'G:i'}}</p>
+        <hr/>
+        <p>There are currently <b>{{ showing.remaining_tickets }}</b> tickets available for this showing.</p>
+        <hr/>
+    <div class="form">
+        <form id="payment-form" action="{% url 'rep_payment' showing.pk %}" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <h3>Payment:</h3>
+            <div class="alert-error">
+                {{ form.non_field_errors }}
+            </div>
+            <div class="form-area">
+                <br/>
+                <div class="form-group">
+                    Student Tickets (£<span id="rep_payment_student_price">{{ student_price | floatformat:2 }}</span>): {{ form.rep_student_tickets }}
+                </div>
+                <br/>
+                The following discount rate will be applied:
+                <span id="discount_rate">{{ discount_rate }}</span>% off
+                <hr/>
+                <div class="form-group">
+                    Total Cost: {{ form.total_cost }}
+                </div>
+                <hr/>
+                <div class="form-group">
+                    Select Payment Method: {{ form.payment_options }}
+                </div>
+            </div>
+            <hr/>
+            <div class="form-group">
+                <input id="confirm-btn" class="btn btn-warning" type="submit" value="Book">
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}

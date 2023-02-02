@@ -1,0 +1,18 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Thanks
+{% endblock %}
+{% block content %}
+<h1>Thank you</h1>
+<p>Thanks for your order. We hope you enjoy the movie!<br/></p>
+<hr/>
+<h3>Your order number is #{{ request.session.transaction }}</h3>
+<p>You're going to see: {{ request.session.film }}</p>
+<p>In Screen {{ request.session.screen }} on {{ request.session.date }} at {{ request.session.time }}</p>
+{% if request.session.age_rating == '18'%}
+<p>(As this is an 18 showing, please remember your ID so we can verify your age!)</p>
+{% endif %}
+<hr/>
+<a class="btn btn-warning" href="/viewings">Make another booking</a>
+{% endblock %}

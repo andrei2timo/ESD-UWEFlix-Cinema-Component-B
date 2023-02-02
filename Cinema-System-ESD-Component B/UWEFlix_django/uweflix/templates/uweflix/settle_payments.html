@@ -1,0 +1,74 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Settle Payments
+{% endblock %}
+{% block content %}
+<style>
+
+    .transaction_list {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .transaction_list th, td {
+	border: 1px solid;
+	text-align: left;
+	padding-right: 15px;
+    }
+
+    .transaction_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .settleButton {
+        display: inline-block;
+        width: 250px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+</style>
+    <center>
+    <h1>Settle Payments</h1>
+    <hr/>
+    {% if transactions %}
+        <h3>Outstanding transactions for Club Rep #{{club_rep}} for the last month:</h3>
+        <br/>
+        <table class="transactions_list">
+            <thead>
+                <tr>
+                    <th>Transaction #</th>
+                    <th>Date</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for outstanding_transaction in transactions %}
+                <tr>
+                    <td>{{ outstanding_transaction.id }}</td>
+                    <td>{{ outstanding_transaction.date | date:'d M Y' }}</td>
+                    <td>£{{ outstanding_transaction.cost | floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Settle", class="settleButton">
+        </form>
+    {%else%}
+        <h3>No Outstanding Transactions!</h3>
+    {% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Add Rep
+{% endblock %}
+{% block content %}
+<h1>Add Club Rep</h1>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true
+      });
+    } );
+</script>
+    <form method="post" class="form-area" autocomplete="off">
+        {% if club_rep %}
+        <div class="success-string">Success: your new Club Rep account has been created.<br/>Username: {{club_rep.user.username}}</div>
+        {% endif %}
+        {% csrf_token %}
+        <hr/>
+        <div class="form-group">
+        {{ userform.as_p }}
+        </div>
+        <br/>
+        <br/>
+        <hr/>
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <br/>
+        <br/>
+        <hr/>
+        <div class="form-group">
+            <button id="confirm-btn" type="submit" class="btn btn-warning">Add Rep</button>
+        </div>
+        </form>
+{% endblock %}

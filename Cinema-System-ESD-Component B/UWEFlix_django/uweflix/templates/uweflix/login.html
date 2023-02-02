@@ -1,0 +1,61 @@
+{% extends "uweflix/layout.html" %}
+{% block title %}
+Login
+{% endblock %}
+{% block content %}
+
+<style>
+    h1 {
+        text-align: center;
+        margin: 10px;
+    }
+
+
+    div.form {
+        display: block;
+        text-align: center;
+    }
+
+    form {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    }
+
+    .inputFields {
+        width: 200px;
+        padding: 10px;
+        margin: 10px 0; 
+        border-radius: 12px;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+    .submitButton {
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        color: black;
+        font-weight: bold;
+        box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
+    }
+
+    .extraHeight {
+        height: 150px;
+    }
+
+</style>
+
+<h1>Log in to UWEFlix</h1>
+<div class = "form">
+    <form method="POST">
+        {% csrf_token %}
+        <label for="username">Username:</label><br>
+        <input type = "text", name = "username", class="inputFields", placeholder="Enter Username"><br>
+        <label for="password">Password:</label><br>
+        <input type = "password", name = "password", class="inputFields", placeholder="Enter Password"><br>
+        <input type="submit" value="Login", class="submitButton">
+    </form>
+</div>
+
+{% endblock %}

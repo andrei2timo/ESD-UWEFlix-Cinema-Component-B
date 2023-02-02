@@ -1,0 +1,39 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+    Add a showing
+{% endblock %}
+{% block content %}
+<h1>Add Showing</h1>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+
+<script>
+    jQuery(function($) {
+        $("#id_time").datetimepicker({
+        changeMonth: true,
+        changeYear: true});
+    });
+</script>
+
+<form method="post" class="form-area" autocomplete="off">
+    <hr>
+    {% csrf_token %}
+    <div class="form-group">
+    {{ form.as_p}}
+    </div>
+    <br/>
+    <br/>
+    <hr>
+    <div class="form-group">
+    <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
+    </div>
+</form>
+   
+
+{% endblock %}

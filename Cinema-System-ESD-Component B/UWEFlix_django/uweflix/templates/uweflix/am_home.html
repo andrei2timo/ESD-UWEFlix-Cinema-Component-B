@@ -1,0 +1,85 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Account Manager Home Page
+{% endblock %}
+{% block content %}
+<style>
+    
+    .flex-container {
+        display: flex;
+        margin-top: 50px;
+        
+    }
+    
+    h2,h3 {
+      color: white;
+    }
+    
+    .flex-child {
+        flex: 1;
+        background: #212529;
+        margin-right: 20px;
+        margin-left: 20px; 
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 0 1.5px 1.5px rgba(0, 0, 0 ,0.8);
+        
+    }  
+
+    .accountManagerHomeButtons {
+        width: 250px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        color: black;
+        box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
+    }    
+</style>
+
+<div class="flex-container">
+
+    <div class="flex-child">
+      <h2>Daily Transactions</h2></br>
+      <h3>{{ transactions }} new transactions today!</h3></br>
+      <a href="{% url 'daily_transactions' %}">
+        <input type="button" value="Daily Transactions" class="accountManagerHomeButtons" />
+     </a>
+    </div>
+    
+    <div class="flex-child">
+        <h2>Periodical Statements</h2></br>
+        <h3>View monthly/annual statements for a customer.</h3></br>
+        <a href="{% url 'customer_statements' %}">
+          <input type="button" value="View Statements" class="accountManagerHomeButtons" />
+       </a>
+    </div>
+
+    <div class="flex-child">
+        <h2>Set Club Payment Details</h2></br>
+        <h3>Add/update card information for an existing club.</h3></br>
+        <a href="{% url 'set_payment' %}">
+          <input type="button" value="Set Payment Details" class="accountManagerHomeButtons" />
+       </a>
+    </div>
+    
+</div>
+
+<div class="flex-container">
+    <div class="flex-child">
+        <h2>Provide Discount for Clubs</h2></br>
+        <h3>Attach a discount rate to an existing club.</h3></br>
+        <a href="#">
+          <input type="button" value="Apply Discount" class="accountManagerHomeButtons" />
+       </a>
+    </div>
+
+    <div class="flex-child">
+        <h2>Amend Account Information</h2></br>
+        <h3>Change account details for an existing user.</h3></br>
+        <a href="{% url 'account_modify' %}">
+          <input type="button" value="Amend Account" class="accountManagerHomeButtons" />
+       </a>
+    </div>
+</div>
+{% endblock %}

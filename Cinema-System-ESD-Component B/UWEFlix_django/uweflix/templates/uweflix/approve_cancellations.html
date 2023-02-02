@@ -1,0 +1,87 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Request Cancellation
+{% endblock %}
+{% block content %}
+<style>
+
+    .transaction_list {
+        margin-left: auto;
+        margin-right: auto;
+        
+    }
+
+    .transaction_list th, td {
+	border: 1px solid;
+	text-align: center;
+	padding-right: 15px;
+    height: 7.5ex;
+    overflow:hidden;
+
+    }
+
+    .transaction_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+</style>
+    <center>
+    <h1>Cancellation Requests</h1>
+    <hr/>
+    {% if zipped %}
+        <h3>All Requests:</h3>
+        <br/>
+        <table class="transaction_list">
+            <thead>
+                <tr>
+                    <th>Transaction #</th>
+                    <th>Date Purchased</th>
+                    <th>Film Name</th>
+                    <th>Date of Showing</th>
+                    <th>Showing Time</th>
+                    <th>Tickets</th>
+                    <th>Cost</th>
+                    <th>Request Cancellation</th>                   
+                </tr>
+            </thead>
+            <tbody>
+            {% for ticket, adult, child, student in zipped %}
+                <tr>
+                    <td>{{ ticket.transaction.id }}</td>
+                    <td>{{ ticket.transaction.date | date:'d M Y' }}</td>
+                    <td>{{ ticket.showing.film.title }}</td>
+                    <td>{{ ticket.showing.time | date:'d M Y'}}</td>
+                    <td>{{ ticket.showing.time | date:'h:i'}}</td>
+                    <td>
+                        {% if adult > 0 %}
+                        {{ adult }}x Adult Tickets<br>
+                        {% endif %}
+                        {% if child > 0 %} 
+                        {{child}}x Child Tickets<br>
+                        {% endif %}
+                        {% if student > 0 %}
+                        {{student}}x Student Tickets
+                        {% endif %}
+                    </td>
+                    <td>£{{ ticket.transaction.cost | floatformat:2 }}</td>
+                    <td>
+                        <form action="{% url 'approve_cancellations' %}" method="post">
+                            {% csrf_token %}
+                            <button name="transaction_number" value={{ticket.transaction.id}} type="submit" class="btn btn-warning">Approve</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No cancellations at the moment.</p>
+    {% endif %}
+    <hr/>
+    </center>
+{% endblock %}
