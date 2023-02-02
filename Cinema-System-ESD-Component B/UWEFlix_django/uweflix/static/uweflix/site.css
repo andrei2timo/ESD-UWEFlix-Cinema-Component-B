@@ -1,0 +1,203 @@
+body{
+	background-color: hsl(0, 0%, 98%);
+}
+.flex-wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;	
+}
+
+h1,h2,h3,h4,h5,h6{
+	color:hsl(0, 0%, 30%);
+}
+
+footer {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 250px;
+}
+
+.box-element{
+	box-shadow:hsl(0, 0%, 80%) 0 0 16px;
+	background-color: #fff;
+	border-radius: 4px;
+	padding: 10px;
+}
+
+.thumbnail{
+	width: 100%;
+	height: 500px;
+	max-height:500px;
+	-webkit-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+    -moz-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+    box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+}
+
+.film{
+	border-radius: 0 0 4px 4px;
+}
+
+.bg-dark{
+	background-color: #4f868c;
+}
+
+
+.col-lg-4, .col-lg-6, .col-lg-8, .col-lg-12, .showings{
+	margin-top: 10px;
+}
+
+.btn{
+	border-radius: 0;
+}
+
+
+.row-image{
+	width: 100px;
+	height: 200px;
+}
+
+#id_adult_tickets, #id_student_tickets, #id_child_tickets, #id_total_cost, #discount-btn, #id_adult, #id_student, #id_child, #id_rep_student_tickets, #id_apply_covid_restrictions {
+	width:90px;
+	float: right;
+}
+
+#id_payment_options, #id_club, #id_card_number, #id_clubrep_choices, #id_timerange_choices, #id_screen, #id_film, #id_time {
+	float:right;
+}
+
+#id_first_name, #id_last_name, #id_password1, #id_password2, #id_dob, #id_email, #id_username, .switch, #id_capacity {
+    float: right;
+}
+
+#increase, #decrease, #resetMe, #id_street, #id_name, #id_street_number, #id_city, #id_post_code, #id_landline_number, #id_mobile_number {
+	float: right;
+}
+
+.expiry-section {
+	float: right;
+}
+
+.expiry-label {
+	float:left;
+}
+
+#id_expiry_month, #id_expiry_year {
+	width: 60px;
+}
+
+#confirm-btn, #set-payment-btn {
+	width:100px;
+	float:right;
+}
+
+.form-field{
+	width:250px;
+	display: inline-block;
+	padding: 5px;
+}
+.form-area {
+	width: 450px;
+}
+
+.form-group {
+	height:50px;
+	width: 500px;
+	margin: auto;
+	display: inline-block;
+	padding: 10px;
+}
+
+.alert-error {
+	color: red;
+}
+
+.topnav-right {
+	float: right;
+}
+
+.topnav-right a {
+	color: #f2f2f2;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+  }
+.center {
+	margin: auto;
+	width: auto;
+	padding: 10px;
+}
+
+.form-inline {
+	margin-right:10px;
+	padding: 10px;
+}
+
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+}
+
+/*Hide default HTML checkbox*/
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color:white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+input:checked + .slider {
+	background-color: #2196F3;
+}
+
+input:focus + .slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+	-webkit-transform: translateX(26px);
+	-ms-transform: translateX(26px);
+	transform: translateX(26px);
+}
+
+.slider-round {
+	border-radius: 34px;
+}
+
+.slider-round:before {
+	border-radius: 50%;
+}
+
+
+
+
+
+
+
