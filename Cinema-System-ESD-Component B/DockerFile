@@ -1,7 +1,7 @@
 # base image  
 FROM python:3.10
 # setup environment variable  
-ENV DockerHOME=/Cinema-System-ESD-Component A/UWEFlix_django/web_project
+ENV DockerHOME=/Cinema-System-ESD-Component B/UWEFlix_django/web_project
 
 # set work directory  
 RUN mkdir -p $DockerHOME  
