@@ -9,8 +9,8 @@ The UWEFlix website is developed using a Django virtual environment, and is inte
 
 ## Installation instructions - Linux
 ```
-$ git clone git@github.com:andrei2timo/ESD-UWEFlix-Cinema-Component-A.git
-$ cd Cinema-System-ESD-Component A/UWEFlix_django
+$ git clone git@github.com:andrei2timo/ESD-UWEFlix-Cinema-Component-B.git
+$ cd Cinema-System-ESD-Component B/UWEFlix_django
 $ pip install requirements.txt
 $ python3 manage.py makemigrations
 $ python3 manage.py migrate
@@ -32,7 +32,7 @@ py -3 -m venv .venv
 ```
 ... and Install the modules and components required:
 ```
-cd Cinema-System-ESD-Component A/UWEFlix_django
+cd Cinema-System-ESD-Component B/UWEFlix_django
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 python manage.py makemigrations
