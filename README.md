@@ -40,3 +40,13 @@ python manage.py migrate
 python manage.py runserver
 ```
 After completing the previous steps, open a web browser and type **http://localhost:8000**
+
+## Usernames and passwords for test cases:
+```
+Cinema Manager account:
+  Username: cinema_manager
+  Password: uweflix1234
+  
+Student account:
+  Username: george.washington
+  Password: uweflix123
