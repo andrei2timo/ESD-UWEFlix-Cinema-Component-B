@@ -50,3 +50,7 @@ Cinema Manager account:
 Student account:
   Username: george.washington
   Password: uweflix123
+
+Account manager:
+  Username: account_manager
+  Password: Uweflix_Project
