@@ -54,3 +54,10 @@ Student account:
 Account manager:
   Username: account_manager
   Password: Uweflix_Project
+  
+Test user:
+  Username: 0001
+  Password: uweflix1234
+  
+  Username: andrei_test
+  Password: uweflix1234
