@@ -55,6 +55,10 @@ Account manager:
   Username: account_manager
   Password: Uweflix_Project
   
+Club Representative:
+  Username: 0020
+  Password: uweflix123
+
 Test user:
   Username: 0001
   Password: uweflix1234
