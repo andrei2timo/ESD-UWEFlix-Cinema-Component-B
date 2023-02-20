@@ -100,6 +100,8 @@ def showings(request, film):
     context = {'showings':showings, 'film':film}
     return render(request, 'uweflix/showings.html', context)
 
+from django.contrib import messages
+
 def add_film(request):
     form = deleteFilmForm()
     context = {"form":form}
@@ -122,10 +124,11 @@ def add_film(request):
                 except:
                     pass
                 film.save()
+                messages.success(request, 'Film added successfully!')
             else:
-                print("Invalid Age Rating")
+                messages.error(request, 'Invalid Age Rating')
         else:
-            print("Duration is not a valid number")
+            messages.error(request, 'Duration is not a valid number')
         if 'delete_film' in request.POST: 
             form = deleteFilmForm(request.POST)
             if form.is_valid():
@@ -134,12 +137,75 @@ def add_film(request):
                     try:
                         film = Film.objects.get(id=film_id)
                         film.delete()
+                        messages.success(request, 'Film deleted successfully!')
                     except Film.DoesNotExist:
-                        print("Film does not exist")
+                        messages.error(request, 'Film does not exist')
                 else:
-                    print("Invalid Film ID")
-    context['form'] = form
+                    messages.error(request, 'Invalid Film ID')
+        if 'edit_film' in request.POST:
+            ages = {"U", "PG", "12", "12A", "15", "18"}
+            title = request.POST.get("edit_title")
+            age_rating = request.POST.get("edit_age_rating")
+            duration = request.POST.get("edit_duration")
+            trailer_desc = request.POST.get("edit_trailer_desc")
+            film_id = request.POST.get("film")
+            try:
+                film = Film.objects.get(id=film_id)
+                if duration is not None and duration.isdigit():
+                    if age_rating in ages:
+                        film.title = title
+                        film.age_rating = age_rating
+                        film.duration = duration
+                        film.trailer_desc = trailer_desc
+                        try:
+                            image = request.FILES.get('edit_image')
+                            film.image = image
+                        except:
+                            pass
+                        film.save()
+                        messages.success(request, 'Film updated successfully!')
+                    else:
+                        messages.error(request, 'Invalid Age Rating')
+                else:
+                    messages.error(request, 'Duration is not a valid number')
+            except Film.DoesNotExist:
+                messages.error(request, 'Film does not exist')
     return render(request, 'uweflix/add_film.html', context)
+
+
+def edit_film(request):
+    form = EditFilmForm()
+    context = {"form": form}
+    if request.method == "POST":
+        ages = {"U", "PG", "12", "12A", "15", "18"}
+        title = request.POST.get("title")
+        age_rating = request.POST.get("age_rating")
+        duration = request.POST.get("duration")
+        trailer_desc = request.POST.get("trailer_desc")
+        film = None
+        if duration is not None and duration.isdigit():
+            if age_rating in ages:
+                try:
+                    film = Film.objects.get(title=title)
+                    film.age_rating = age_rating
+                    film.duration = duration
+                    film.trailer_desc = trailer_desc
+                    try:
+                        image = request.FILES.get("image")
+                        film.image = image
+                    except:
+                        pass
+                    film.save()
+                except Film.DoesNotExist:
+                    print("Film does not exist")
+            else:
+                print("Invalid Age Rating")
+        else:
+            print("Duration is not a valid number")
+        if film:
+            form = EditFilmForm(instance=film)
+    context["form"] = form
+    return render(request, "uweflix/add_film.html", context)
 
 def add_screen(request):
     context = {}

@@ -7,7 +7,12 @@ UWEFlix - Viewings
 <div class="row">
     {% for film in films %}
     <div class="col-lg-4">
-        <img class="thumbnail" src="{{ film.image.url }}">
+		{% if film.image %}
+			<img class="thumbnail" src="{{ film.image.url }}">
+		{% else %}
+			<img class="thumbnail" src="{% static 'path/to/placeholder.png' %}">
+		{% endif %}
+        
         <div class="box-element bg-dark film">
             <h6 style="height: 30px; color: white;"><strong>{{film.title}}</strong></h6>
             <hr style="color: white">

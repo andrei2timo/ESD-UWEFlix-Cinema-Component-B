@@ -232,3 +232,15 @@ class addScreenForm(forms.ModelForm):
     class Meta:
         model = Screen
         fields = "__all__"
+
+
+class EditFilmForm(forms.ModelForm):
+    class Meta:
+        model = Film
+        fields = ('title', 'genre', 'year', 'description', 'poster')
+
+    title = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    genre = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    year = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
+    poster = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
