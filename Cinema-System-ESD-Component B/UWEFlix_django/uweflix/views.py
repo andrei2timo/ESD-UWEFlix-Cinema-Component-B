@@ -109,7 +109,7 @@ def add_film(request):
         age_rating = request.POST.get('age_rating')
         duration = request.POST.get('duration')
         trailer_desc = request.POST.get('trailer_desc')
-        if (duration.isdigit()):
+        if duration is not None and duration.isdigit():
             if(age_rating in ages):
                 film = Film()
                 film.title = title
@@ -129,9 +129,15 @@ def add_film(request):
         if 'delete_film' in request.POST: 
             form = deleteFilmForm(request.POST)
             if form.is_valid():
-                film_id = form.cleaned_data['film']
-                Film.removeFilm(film_id)
-
+                film_id = form.cleaned_data.get('film')
+                if film_id is not None:
+                    try:
+                        film = Film.objects.get(id=film_id)
+                        film.delete()
+                    except Film.DoesNotExist:
+                        print("Film does not exist")
+                else:
+                    print("Invalid Film ID")
     context['form'] = form
     return render(request, 'uweflix/add_film.html', context)
 
