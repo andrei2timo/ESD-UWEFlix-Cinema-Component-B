@@ -3,7 +3,7 @@
     Add a film
 {% endblock %}
 {% block content %}
-<h1>Add Film</h1>
+<h2>Add Film</h2>
 <div class="row">
     <div class="col-lg-6">
         <div class="box-element" id ="form-wrapper">
@@ -39,9 +39,8 @@
             </form>
 
         </div>
-        <br/>
+        <br/><br/>
         <h2>Delete Film</h2>
-        <br/>
             <div class="box-element" id ="form-wrapper">
                 <form id="form" method="POST">
                 {% csrf_token %}
