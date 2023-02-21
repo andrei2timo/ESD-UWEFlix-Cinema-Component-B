@@ -1,10 +1,10 @@
 {% extends "uweflix/layout.html" %}
 {% load static %}
 {% block title %}
-    Add a showing
+    Edit Showing
 {% endblock %}
 {% block content %}
-<h1>Add Showing</h1>
+<h1>Edit Showing</h1>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
@@ -31,10 +31,8 @@
     <br/>
     <hr>
     <div class="form-group">
-    <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
-    <a href="{% url 'edit_showing' showing_id=1 %}" class="btn btn-warning">Edit Showing</a>
+    <button id="confirm-btn" type="submit" class="btn btn-warning">Save changes</button>
     </div>
 </form>
-   
 
 {% endblock %}

@@ -219,6 +219,12 @@ class addShowingForm(forms.ModelForm):
         model = Showing
         fields = "__all__"
         exclude = ('remaining_tickets',)
+    
+class editShowingForm(forms.ModelForm):
+    class Meta:
+        model = Showing
+        fields = "__all__"
+        exclude = ('remaining_tickets',)
 
 class deleteFilmForm(forms.Form):
     film_choices = ((None, "Select a film:"),)

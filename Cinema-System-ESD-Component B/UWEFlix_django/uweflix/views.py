@@ -254,13 +254,26 @@ def add_showing(request):
     if request.method == "POST":
         form = addShowingForm(request.POST)
         if form.is_valid():
+            id = form.cleaned_data['id']
             screen = form.cleaned_data['screen']
             film = form.cleaned_data['film']
             time = form.cleaned_data['time']
             Showing.newShowing(screen,film,time)
     context['form'] = form
     return render(request, 'uweflix/add_showing.html', context)
-    
+
+def edit_showing(request, showing_id):
+    context = {}
+    showing = get_object_or_404(Showing, id=showing_id)
+    if request.method == 'POST':
+        form = editShowingForm(request.POST, instance=showing)
+        if form.is_valid():
+            form.save()
+    else:
+        form = editShowingForm(instance=showing)
+    context['form'] = form
+    return render(request, 'uweflix/edit_showing.html', context)
+
 def registerPage(request):
     form = CustomUserCreationForm()
     customer_form = RegisterStudentForm()
