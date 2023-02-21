@@ -34,7 +34,7 @@ Showings
         {% if film.image %}
 			<img class="thumbnail" src="{{ film.image.url }}">
 		{% else %}
-			<img class="thumbnail" src="{% static 'path/to/placeholder.png' %}">
+			<img class="thumbnail" src="{% static 'uweflix/images/no.png' %}">
 		{% endif %}
         <div class="box-element bg-dark film">
             <h6><strong>{{film.title}}</strong></h6>
