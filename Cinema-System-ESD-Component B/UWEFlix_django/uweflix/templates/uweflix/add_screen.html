@@ -1,18 +1,17 @@
 {% extends "uweflix/layout.html" %}
 {% load static %}
 {% block title %}
-    Add a screen
+Add/Edit Screen
 {% endblock %}
 {% block content %}
-<h1>Add Screen</h1>
 
+<h1>Add Screen</h1>
 <style>
     .submit-button {
         margin: 10px 10px 10px 10px;
     } 
 </style>
-
-<form method="post" class="form-area" autocomplete="off">
+<form method="POST" class="box-element" autocomplete="off">
     <hr>
     {% csrf_token %}
     <div class="form-group">
@@ -22,7 +21,27 @@
     <br/>
     <hr>
     <div class="form-group">
-    <button id="confirm-btn" type="submit" class="btn btn-warning">Add Screen</button>
+    <button id="confirm-btn" type="submit" class="btn btn-warning">Add</button>
+    </div>
+</form>
+<br/><br/><br/>
+
+<h1>Edit Screen details</h1>
+<form method="POST" class="box-element" autocomplete="off"> 
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="screen-select">Select Screen:</label>
+		<select id="screen-select" name="selected_screen">
+			{% for screen in screens %}
+				<option value="{{ screen.id }}" {% if screen.id == selected_screen.id %}selected{% endif %}>{{ screen.name }}</option>
+			{% endfor %}
+</select>
+    </div>
+    <div class="form-group">
+        {{ form.as_p }}
+    </div>
+    <div class="form-group">
+        <button id="confirm-btn" type="submit" class="btn btn-warning">Save</button>
     </div>
 </form>
 {% endblock %}

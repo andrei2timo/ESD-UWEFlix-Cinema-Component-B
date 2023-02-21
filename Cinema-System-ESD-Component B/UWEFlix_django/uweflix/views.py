@@ -219,6 +219,22 @@ def add_screen(request):
     context['form'] = form
     return render(request, 'uweflix/add_screen.html', context)
 
+def edit_screen(request):
+    context = {}
+    selected_screen = None
+    form = editScreenForm()
+    if request.method == "POST":
+        screen_id = request.POST.get('selected_screen')
+        selected_screen = Screen.objects.get(pk=screen_id)
+        form = editScreenForm(request.POST, instance=selected_screen)
+        if form.is_valid():
+            form.save()
+    context['form'] = form
+    context['screens'] = Screen.objects.all()
+    context['selected_screen'] = selected_screen
+    return render(request, 'uweflix/add_screen.html', context)
+
+
 def add_showing(request):
     context = {}
     form = addShowingForm

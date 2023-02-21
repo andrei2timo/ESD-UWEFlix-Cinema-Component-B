@@ -233,6 +233,14 @@ class addScreenForm(forms.ModelForm):
         model = Screen
         fields = "__all__"
 
+class editScreenForm(forms.ModelForm):
+    class Meta:
+        model = Screen
+        fields = ('capacity', 'apply_covid_restrictions')
+        widgets = {
+            'capacity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Screen capacity'}),
+            'apply_covid_restrictions': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 class EditFilmForm(forms.ModelForm):
     class Meta:
