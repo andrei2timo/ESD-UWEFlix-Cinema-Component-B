@@ -209,28 +209,41 @@ def edit_film(request):
 
 def add_screen(request):
     context = {}
-    form = addScreenForm
+    form = addScreenForm()
+    selected_screen = None
+    form1 = editScreenForm()
+    screens = Screen.objects.all()
+    options = [screen.id for screen in screens]
+    if screens:
+        context['screens'] = screens
+        context['options'] = options
     if request.method == "POST":
         form = addScreenForm(request.POST)
         if form.is_valid():
             capacity = form.cleaned_data['capacity']
             covid_restrictions = form.cleaned_data['apply_covid_restrictions']
-        Screen.newScreen(capacity, covid_restrictions)
-    context['form'] = form
-    return render(request, 'uweflix/add_screen.html', context)
+            screen = Screen(capacity=capacity, apply_covid_restrictions=covid_restrictions)
+            screen.save()
+            return redirect('add_screen')
+            
+        if 'edit_screen' in request.POST:
+            capacity = request.POST.get('capacity')
+            covid_restrictions = request.POST.get('apply_covid_restrictions')
+            try:
+                selected_screen = Screen.objects.get(id=screen_id)
+                if capacity is not None and capacity.isdigit():
+                    screen_id = Screen.objects.get(id=id)
+                    screen_id.capacity = capacity
+                    screen_id.apply_covid_restrictions = covid_restrictions
+                selected_screen = Screen.objects.get(id=screen_id)
+                form1 = editScreenForm(request.POST, instance=selected_screen)
+            except Screen.DoesNotExist:
+                    print("Screen does not exist")
+            if screen_id:
+                form = EditFilmForm(instance=screen_id)
 
-def edit_screen(request):
-    context = {}
-    selected_screen = None
-    form = editScreenForm()
-    if request.method == "POST":
-        screen_id = request.POST.get('selected_screen')
-        selected_screen = Screen.objects.get(pk=screen_id)
-        form = editScreenForm(request.POST, instance=selected_screen)
-        if form.is_valid():
-            form.save()
     context['form'] = form
-    context['screens'] = Screen.objects.all()
+    context['form1'] = form1
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
 

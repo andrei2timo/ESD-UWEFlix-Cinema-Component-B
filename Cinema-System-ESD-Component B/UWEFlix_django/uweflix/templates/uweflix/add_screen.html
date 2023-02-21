@@ -12,28 +12,32 @@ Add/Edit Screen
     } 
 </style>
 <form method="POST" class="box-element" autocomplete="off">
-    <hr>
     {% csrf_token %}
     <div class="form-group">
     {{ form.as_p }}
     </div>
-    <br/>
-    <br/>
-    <hr>
     <div class="form-group">
-    <button id="confirm-btn" type="submit" class="btn btn-warning">Add</button>
+    <button type="submit" name="add_screen" value="Add Screen" class="btn btn-warning">Add Screen</button>
     </div>
 </form>
 <br/><br/><br/>
 
 <h1>Edit Screen details</h1>
-<form method="POST" class="box-element" autocomplete="off"> 
+<form method="POST" class="box-element" autocomplete="off">
     {% csrf_token %}
     <div class="form-group">
-        {{ form.as_p }}
+        <label for="selected_screen">Select Screen:</label>
+        <select id="selected_screen" name="selected_screen">
+            {% for option in options %}
+            <option value="{{ option.id }}">{{ option }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="form-group">
-        <button id="confirm-btn" type="submit" class="btn btn-warning">Save</button>
+        {{ form1.as_p }}
+    </div>
+    <div class="form-group">
+        <button type="submit" name="edit_screen" value="Edit Screen" class="btn btn-warning">Edit Screen</button>
     </div>
 </form>
 {% endblock %}
