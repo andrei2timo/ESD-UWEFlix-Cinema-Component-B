@@ -30,14 +30,6 @@ Add/Edit Screen
 <form method="POST" class="box-element" autocomplete="off"> 
     {% csrf_token %}
     <div class="form-group">
-        <label for="screen-select">Select Screen:</label>
-		<select id="screen-select" name="selected_screen">
-			{% for screen in screens %}
-				<option value="{{ screen.id }}" {% if screen.id == selected_screen.id %}selected{% endif %}>{{ screen.name }}</option>
-			{% endfor %}
-</select>
-    </div>
-    <div class="form-group">
         {{ form.as_p }}
     </div>
     <div class="form-group">
