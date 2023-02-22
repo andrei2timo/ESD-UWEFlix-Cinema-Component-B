@@ -19,22 +19,41 @@
         changeMonth: true,
         changeYear: true});
     });
+
+    function updateShowingLink() {
+        var selectedValue = $("#selected-showing").val();
+        var editShowingLink = $('#edit-showing-link');
+        if (selectedValue !== 'no-results') {
+            var href = '{% url 'edit_showing' showing_id=4 %}'.replace(/showing_id=\d+/, 'showing_id=' + selectedValue);
+            editShowingLink.attr('href', href);
+        } 
+        else {
+            editShowingLink.removeAttr('href');
+        }
+    }
 </script>
 
 <form method="post" class="form-area" autocomplete="off">
     <hr>
     {% csrf_token %}
     <div class="form-group">
-    {{ form.as_p}}
+        {{ form.as_p}}
     </div>
     <br/>
     <br/>
     <hr>
     <div class="form-group">
-    <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
-    <a href="{% url 'edit_showing' showing_id=1 %}" class="btn btn-warning">Edit Showing</a>
+        <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
+        <label for="selected_showing">Select Showing:</label>
+        <select id="selected-showing" name="selected_showing" onchange="updateShowingLink()">
+            <option value="no-results">Select a showing</option>
+            {% for option in options %}
+                <option value="{{ option.id }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+        <a href="#" class="btn btn-warning" id="edit-showing-link">Edit Showing</a>
+
     </div>
 </form>
-   
 
 {% endblock %}

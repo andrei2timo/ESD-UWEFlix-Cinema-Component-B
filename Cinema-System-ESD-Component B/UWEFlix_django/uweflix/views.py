@@ -251,6 +251,10 @@ def add_screen(request):
 def add_showing(request):
     context = {}
     form = addShowingForm
+    showings = Showing.objects.all()
+    options = [showing.id for showing in showings]
+    if showings:
+        context['options'] = options
     if request.method == "POST":
         form = addShowingForm(request.POST)
         if form.is_valid():
