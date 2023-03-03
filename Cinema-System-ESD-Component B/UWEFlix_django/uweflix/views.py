@@ -267,14 +267,29 @@ def add_showing(request):
     return render(request, 'uweflix/add_showing.html', context)
 
 def edit_showing(request, showing_id):
-    context = {}
+    form = editShowingForm()
+    context = {"form":form}
     showing = get_object_or_404(Showing, id=showing_id)
-    if request.method == 'POST':
-        form = editShowingForm(request.POST, instance=showing)
-        if form.is_valid():
-            form.save()
-    else:
-        form = editShowingForm(instance=showing)
+    if 'edit_showing' in request.POST:
+        screen = request.POST.get("Screen")
+        film = request.POST.get("Film")
+        time = request.POST.get("Time")
+        try:
+            showing = Film.objects.get(id=showing_id)
+            if time is not None:
+                showing.screen = screen
+                showing.film = film
+                showing.time = time       
+                if form.is_valid():
+                    form.save()
+                showing.save()
+                messages.success(request, 'Showing updated successfully!')
+            else:
+                messages.error(request, 'Invalid time')
+        except Showing.DoesNotExist:
+                messages.error(request, "Showing doesn't exists")
+    #else:
+        #form = editShowingForm(instance=showing)
     context['form'] = form
     return render(request, 'uweflix/edit_showing.html', context)
 

@@ -21,16 +21,24 @@
     });
 
     function updateShowingLink() {
-        var selectedValue = $("#selected-showing").val();
+    console.log('updateShowingLink() called');
+    var selectedValue = $("#selected-showing").val();
+    if (selectedValue !== 'no-results') 
+	{   
+		selectedValue = Math.floor(Math.random()*40);
+        console.log('Selected value: ', selectedValue);
         var editShowingLink = $('#edit-showing-link');
-        if (selectedValue !== 'no-results') {
-            var href = '{% url 'edit_showing' showing_id=4 %}'.replace(/showing_id=\d+/, 'showing_id=' + selectedValue);
-            editShowingLink.attr('href', href);
-        } 
-        else {
-            editShowingLink.removeAttr('href');
-        }
+        var href = "{% url 'edit_showing' showing_id=1 %}".replace('1', selectedValue);
+        editShowingLink.attr('href', href);
+        $('#show-id-field').val(selectedValue);
+        console.log('Href: ', href);
+    } else {
+        console.log('No option selected');
+        $('#edit-showing-link').removeAttr('href');
+        $('#show-id-field').val('');
     }
+}
+
 </script>
 
 <form method="post" class="form-area" autocomplete="off">
@@ -46,13 +54,13 @@
         <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
         <label for="selected_showing">Select Showing:</label>
         <select id="selected-showing" name="selected_showing" onchange="updateShowingLink()">
-            <option value="no-results">Select a showing</option>
-            {% for option in options %}
-                <option value="{{ option.id }}">{{ option }}</option>
-            {% endfor %}
-        </select>
-        <a href="#" class="btn btn-warning" id="edit-showing-link">Edit Showing</a>
-
+			<option value="no-results">Select a showing</option>
+				{% for option in options %}
+					<option value="{{ option.id }}">{{ option }}</option>
+				{% endfor %}
+		</select>
+		<a href="#" class="btn btn-warning" id="edit-showing-link">Edit Showing</a>
+		<input type="hidden" name="showing_id" id="showing-id-field">
     </div>
 </form>
 
