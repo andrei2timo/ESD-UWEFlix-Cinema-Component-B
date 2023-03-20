@@ -10,6 +10,7 @@ Thanks
 <h3>Your order number is #{{ request.session.transaction }}</h3>
 <p>You're going to see: {{ request.session.film }}</p>
 <p>In Screen {{ request.session.screen }} on {{ request.session.date }} at {{ request.session.time }}</p>
+<p>As this is a Covid-19 restricted showing, your seat has been allocated to SEAT for you. </p>
 {% if request.session.age_rating == '18'%}
 <p>(As this is an 18 showing, please remember your ID so we can verify your age!)</p>
 {% endif %}
