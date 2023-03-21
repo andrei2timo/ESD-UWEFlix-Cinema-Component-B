@@ -418,7 +418,6 @@ def payment(request, showing):
                 for i in range(child_tickets):
                     Ticket.newTicket(new_transaction, showing, "child")
                 showing.remaining_tickets -= (adult_tickets + student_tickets + child_tickets)
-                print("APPLY COVID RESTRICTIONS IS: ", showing.screen.apply_covid_restrictions)
                 showing.save()
                 request.session['screen'] = showing.screen.id
                 request.session['transaction'] = new_transaction.id
@@ -428,6 +427,8 @@ def payment(request, showing):
                 request.session['time'] = showing.time.strftime("%H:%M")
                 request.session['successful_purchase'] = True
                 request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
+                if showing.screen.apply_covid_restrictions:
+                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
                 return redirect('/thanks')
         else:
             return render(request, 'uweflix/payment.html', context={'form':form, "showing": showing})
@@ -475,6 +476,8 @@ def pay_with_card(request):
             request.session['time'] = showing.time.strftime("%H:%M")
             request.session['successful_purchase'] = True
             request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
+            if showing.screen.apply_covid_restrictions:
+                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
             return redirect('/thanks')
         else: return render(request,"uweflix/pay_with_card.html",{'form':form})
 
@@ -529,6 +532,8 @@ def rep_payment(request, showing):
                 request.session['time'] = showing.time.strftime("%H:%M")
                 request.session['successful_purchase'] = True
                 request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
+                if showing.screen.apply_covid_restrictions:
+                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
                 return redirect('/thanks')
         else:
             print("invalid")
