@@ -406,7 +406,6 @@ def payment(request, showing):
                         context = {'error': "Account based error: Your account type is not permitted to purchase tickets. Please change accounts and try again."}
                         return render(request, "uweflix/error.html", context)
                 elif payment_option == "nopay":  # Regular customer pays with card
-                    print("hello")
                     return redirect(f'/pay_with_card/?user={0}&cost={total_cost}&adult={adult_tickets}&student={student_tickets}&child={child_tickets}&showing={showing.id}')
                 else:
                     context = {'error': "As a regular customer, you may only make purchases via credit card. Please go back and select this option."}
@@ -419,6 +418,7 @@ def payment(request, showing):
                 for i in range(child_tickets):
                     Ticket.newTicket(new_transaction, showing, "child")
                 showing.remaining_tickets -= (adult_tickets + student_tickets + child_tickets)
+                print("APPLY COVID RESTRICTIONS IS: ", showing.screen.apply_covid_restrictions)
                 showing.save()
                 request.session['screen'] = showing.screen.id
                 request.session['transaction'] = new_transaction.id
@@ -427,6 +427,7 @@ def payment(request, showing):
                 request.session['date'] = showing.time.strftime("%d/%m/%y")
                 request.session['time'] = showing.time.strftime("%H:%M")
                 request.session['successful_purchase'] = True
+                request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
                 return redirect('/thanks')
         else:
             return render(request, 'uweflix/payment.html', context={'form':form, "showing": showing})
@@ -473,6 +474,7 @@ def pay_with_card(request):
             request.session['date'] = showing.time.strftime("%d/%m/%y")
             request.session['time'] = showing.time.strftime("%H:%M")
             request.session['successful_purchase'] = True
+            request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
             return redirect('/thanks')
         else: return render(request,"uweflix/pay_with_card.html",{'form':form})
 
@@ -526,6 +528,7 @@ def rep_payment(request, showing):
                 request.session['date'] = showing.time.strftime("%d/%m/%y")
                 request.session['time'] = showing.time.strftime("%H:%M")
                 request.session['successful_purchase'] = True
+                request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
                 return redirect('/thanks')
         else:
             print("invalid")
