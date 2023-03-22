@@ -25,6 +25,129 @@ def account_modify(request):
         'form':form
     }
     return render(request, 'uweflix/account_modify.html', context)
+
+def manage_accounts(request):  # Manage Accounts
+    user_list = User.objects.all()
+    context = {
+        'user_list': user_list
+    }
+
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def add_user(request):  # Manage Accounts
+    if request.method == "POST":
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        user = User(first_name=first_name, last_name=last_name,
+                    username=username, email=email)
+        user.save()
+        messages.info(request, "USER ADDED SUCCESSFULLY")
+    else:
+        pass
+
+    user_list = User.objects.all()
+    context = {
+        'user_list': user_list
+    }
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def delete_user(request, myid):  # Manage Accounts
+    user = User.objects.get(id=myid)
+    user.delete()
+    messages.info(request, 'USER DELETED SUCCESSFULLY')
+    return redirect(manage_accounts)
+
+
+def edit_user(request, myid):  # Manage Accounts
+    sel_user = User.objects.get(id=myid)
+    user_list = User.objects.all()
+    context = {
+        'sel_user': sel_user,
+        'user_list': user_list
+    }
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def update_user(request, myid):  # Manage Accounts
+    user = User.objects.get(id=myid)
+    user.first_name = request.POST['first_name']
+    user.Last_name = request.POST['last_name']
+    user.username = request.POST['username']
+    user.email = request.POST['email']
+    user.save()
+    messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('manage_accounts')
+
+
+def manage_club_account(request):  # Manage Clubs
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def add_clubs(request):  # Manage Clubs
+    if request.method == "POST":
+        name = request.POST['club']
+        street_number = request.POST['street_number']
+        street = request.POST['street']
+        city = request.POST['city']
+        post_code = request.POST['post_code']
+        landline_number = request.POST['landline_number']
+        mobile_number = request.POST['mobile_number']
+        email = request.POST['email']
+
+        clubs = Club(name=name, street_number=street_number, street=street, city=city,
+                     post_code=post_code, landline_number=landline_number, mobile_number=mobile_number, email=email)
+        clubs.save()
+        messages.info(request, "CLUB ADDED SUCCESSFULLY")
+    else:
+        pass
+
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def delete_clubs(request, myid):  # Manage Accounts
+    clubs = Club.objects.get(id=myid)
+    clubs.delete()
+    messages.info(request, 'CLUB DELETED SUCCESSFULLY')
+    return redirect(manage_club_account)
+
+
+def edit_clubs(request, myid):  # Manage Accounts
+    sel_clubs = Club.objects.get(id=myid)
+    club_list = Club.objects.all()
+    context = {
+        'sel_clubs': sel_clubs,
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def update_clubs(request, myid):  # Manage Accounts
+    clubs = Club.objects.get(id=myid)
+    clubs.name = request.POST['club']
+    clubs.street_number = request.POST['street_number']
+    clubs.street = request.POST['street']
+    clubs.city = request.POST['city']
+    clubs.post_code = request.POST['post_code']
+    clubs.landline_number = request.POST['landline_number']
+    clubs.mobile_number = request.POST['mobile_number']
+    clubs.email = request.POST['email']
+    clubs.save()
+    messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('manage_club_account')
+
     
 '''
 def registerPage(request):
