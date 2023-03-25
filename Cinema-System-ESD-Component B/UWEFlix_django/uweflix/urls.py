@@ -1,7 +1,7 @@
 from django.urls import path
 from uweflix import views
 from uweflix.models import *
-
+from .views import *
 
 
 urlpatterns = [
