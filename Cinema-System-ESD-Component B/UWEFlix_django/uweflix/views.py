@@ -55,7 +55,26 @@ def home(request):
     return render(request, 'uweflix/index.html')
     
 def clubdiscount(request):
-    return render(request, 'uweflix/discount.html')
+    context = {}
+    form = DiscountForm()
+    club_reps = ClubRep.objects.all()
+
+    if request.method == "POST":
+        form = DiscountForm(request.POST)
+        if form.is_valid():
+            club_rep = form.cleaned_data['club_rep']
+            discount_value = form.cleaned_data['discountValue']
+
+            # Apply the discount to the selected club_rep
+            club = club_rep.club
+            club.discount_rate = discount_value
+            club.save()
+
+            messages.success(request, f'Discount of {discount_value}% applied to {club_rep.user.first_name} {club_rep.user.last_name} of {club.name}.')
+
+    context['form'] = form
+    context['club_reps'] = club_reps
+    return render(request, "uweflix/discount.html", context)
 
 def am_home(request):
     transactions = Transaction.objects.filter(date = dt.today())
@@ -487,7 +506,7 @@ def rep_payment(request, showing):
     showing = Showing.getShowing(id=showing)
     form = RepPaymentForm()
     rep = ClubRep.objects.get(user_id=request.session["user_id"])
-    discountRate = 100-(rep.club.discount_rate * 100)
+    discountRate = rep.club.discount_rate
     adult,student,child=Prices.getCurrentPrices()
     context = {
         "showing": showing,
