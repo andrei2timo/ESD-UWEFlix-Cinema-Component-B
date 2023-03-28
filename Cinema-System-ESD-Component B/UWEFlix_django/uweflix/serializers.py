@@ -9,9 +9,11 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+
     class Meta:
         model = Transaction
-        fields = ('customer', 'date', 'cost',
+        fields = ('date', 'cost',
                   'is_settled', 'request_to_cancel')
 
 
@@ -28,15 +30,21 @@ class ScreenSerializer(serializers.ModelSerializer):
 
 
 class ShowingSerializer(serializers.ModelSerializer):
+    screen = ScreenSerializer()
+    film = FilmSerializer()
+
     class Meta:
         model = Showing
-        fields = ('screen', 'film', 'time', 'remaining_tickets')
+        fields = ('time', 'remaining_tickets')
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    transaction = TransactionSerializer()
+    showing = ShowingSerializer()
+
     class Meta:
         model = Ticket
-        fields = ('transaction', 'showing', 'ticket_type')
+        fields = ('ticket_type')
 
 
 class ClubSerializer(serializers.ModelSerializer):
@@ -44,6 +52,14 @@ class ClubSerializer(serializers.ModelSerializer):
         model = Club
         fields = ('name', 'street_number', 'street', 'city', 'post_code', 'landline_number',
                   'mobile_number', 'email', 'card_number', 'card_expiry_date', 'discount_rate')
+
+
+class ClubRepSerializer(serializers.ModelSerializer):
+    club = ClubSerializer()
+
+    class Meta:
+        model = ClubRep
+        fields = ('club_rep_num')
 
 
 class PricesSerializer(serializers.ModelSerializer):
