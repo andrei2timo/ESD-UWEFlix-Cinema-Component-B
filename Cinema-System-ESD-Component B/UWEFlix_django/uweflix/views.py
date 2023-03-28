@@ -109,6 +109,28 @@ def films_endpoint(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def specific_film_endpoint(request, pk):
+    try:
+        film = Film.objects.get(pk=pk)
+    except film.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = FilmSerializer(film)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = FilmSerializer(film, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        film.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 def add_film(request):
     form = deleteFilmForm()
     context = {"form":form}

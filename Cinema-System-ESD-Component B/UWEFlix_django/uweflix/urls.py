@@ -12,6 +12,7 @@ urlpatterns = [
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
     path("add_film/", views.add_film, name="add_film"),
     path("films_endpoint/", views.films_endpoint, name="films_endpoint"),
+    path("specific_film_endpoint/<int:film>/", views.specific_film_endpoint, name="specific_film_endpoint"),
     path("login/", views.login, name="login"),
     path("topup/", views.topup, name="topup"),
     path("logout/", views.logout, name="logout"),
