@@ -11,7 +11,7 @@ from django.http import Http404
 from django.utils import timezone
 from django.contrib import messages
 from rest_framework.decorators import api_view
-from .serializers import FilmSerializer
+from .serializers import FilmSerializer, ShowingSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -97,13 +97,17 @@ def showings(request, film):
     return render(request, 'uweflix/showings.html', context)
 
 @api_view(['GET','POST'])
-def film_endpoint(request):
-    serializer = FilmSerializer(data=request.data)
-    if serializer.is_valid() and request.method == 'POST':
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    elif serializer.is_valid() and request.method == 'GET':
-        return Response(serializer.data, status=status.HTTP_200_OK)   
+def films_endpoint(request):
+    if request.method == 'GET':
+        films = Film.objects.all()
+        serializer = FilmSerializer(films, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializer = FilmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def add_film(request):
     form = deleteFilmForm()
@@ -249,6 +253,14 @@ def add_screen(request):
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
 
+@api_view(['GET','POST'])
+def showing_endpoint(request):
+    serializer = ShowingSerializer(data=request.data)
+    if serializer.is_valid() and request.method == 'POST':
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    elif serializer.is_valid() and request.method == 'GET':
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 def add_showing(request):
     context = {}

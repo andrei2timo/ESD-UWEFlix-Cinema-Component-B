@@ -11,7 +11,7 @@ urlpatterns = [
     path("viewings/", views.viewings, name="viewings"),
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
     path("add_film/", views.add_film, name="add_film"),
-    path("film_endpoint/", views.film_endpoint, name="film_endpoint"),
+    path("films_endpoint/", views.films_endpoint, name="films_endpoint"),
     path("login/", views.login, name="login"),
     path("topup/", views.topup, name="topup"),
     path("logout/", views.logout, name="logout"),
@@ -39,6 +39,7 @@ urlpatterns = [
     path("request_cancellation/", views.request_cancellation, name="request_cancellation"),
     path("approve_cancellations/", views.approve_cancellation, name="approve_cancellations"),
     path("add_screen/", views.add_screen, name="add_screen"),
+    path("showing_endpoint/", views.showing_endpoint, name="showing_endpoint"),
     path("add_showing/", views.add_showing, name="add_showing"),
     path('edit_showing/<int:showing_id>/', views.edit_showing, name='edit_showing'),
 ]
