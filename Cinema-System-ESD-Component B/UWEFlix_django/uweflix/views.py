@@ -96,13 +96,14 @@ def showings(request, film):
     context = {'showings':showings, 'film':film}
     return render(request, 'uweflix/showings.html', context)
 
-@api_view(['POST'])
-def add_film_with_django_REST_framework(request):
+@api_view(['GET','POST'])
+def film_endpoint(request):
     serializer = FilmSerializer(data=request.data)
-    if serializer.is_valid():
+    if serializer.is_valid() and request.method == 'POST':
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif serializer.is_valid() and request.method == 'GET':
+        return Response(serializer.data, status=status.HTTP_200_OK)   
 
 def add_film(request):
     form = deleteFilmForm()
@@ -173,7 +174,6 @@ def add_film(request):
             except Film.DoesNotExist:
                 messages.error(request, 'Film does not exist')
     return render(request, 'uweflix/add_film.html', context)
-
 
 def edit_film(request):
     form = EditFilmForm()
