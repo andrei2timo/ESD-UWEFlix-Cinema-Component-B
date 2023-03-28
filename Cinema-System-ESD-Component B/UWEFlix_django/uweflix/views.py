@@ -11,7 +11,7 @@ from django.http import Http404
 from django.utils import timezone
 from django.contrib import messages
 from rest_framework.decorators import api_view
-from .serializers import FilmSerializer, ScreenSerializer, ShowingSerializer
+from .serializers import ClubSerializer, FilmSerializer, ScreenSerializer, ShowingSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -109,26 +109,23 @@ def films_endpoint(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def specific_film_endpoint(request, pk):
-    try:
-        film = Film.objects.get(pk=pk)
-    except film.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = FilmSerializer(film)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = FilmSerializer(film, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        film.delete()
+@api_view(['GET', 'PUT', 'DELETE']) 
+def specific_film_endpoint(request, pk): 
+    try: 
+        film = Film.objects.get(pk=pk) 
+    except film.DoesNotExist: 
+        return Response(status=status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET': 
+        serializer = FilmSerializer(film) 
+        return Response(serializer.data) 
+    elif request.method == 'PUT': 
+        serializer = FilmSerializer(film, data=request.data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+    elif request.method == 'DELETE': 
+        film.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 def add_film(request):
@@ -247,6 +244,25 @@ def screens_endpoint(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE']) 
+def specific_screen_endpoint(request, pk): 
+    try: 
+        screen = Screen.objects.get(pk=pk) 
+    except screen.DoesNotExist: 
+        return Response(status=status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET': 
+        serializer = ScreenSerializer(screen) 
+        return Response(serializer.data) 
+    elif request.method == 'PUT': 
+        serializer = ScreenSerializer(screen, data=request.data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+    elif request.method == 'DELETE': 
+        screen.delete() 
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def add_screen(request):
     context = {}
@@ -710,6 +726,38 @@ def set_payment_details(request):
         else:
             context = {'form': form}
     return render(request, "uweflix/set_payment.html", context)
+
+@api_view(['GET','POST'])
+def clubs_endpoint(request):
+    if request.method == 'GET':
+        clubs = Club.objects.all()
+        serializer = ClubSerializer(clubs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializer = ClubSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE']) 
+def specific_club_endpoint(request, pk): 
+    try: 
+        club = Club.objects.get(pk=pk) 
+    except club.DoesNotExist: 
+        return Response(status=status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET': 
+        serializer = ClubSerializer(club) 
+        return Response(serializer.data) 
+    elif request.method == 'PUT': 
+        serializer = ClubSerializer(club, data=request.data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+    elif request.method == 'DELETE': 
+        club.delete() 
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def add_club(request):
     context = {}
