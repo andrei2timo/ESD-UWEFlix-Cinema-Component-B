@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Club, Customer, Film, Prices, Screen, Showing, Ticket, Transaction
+from .models import Club, ClubRep, Customer, Film, Prices, Screen, Showing, Ticket, Transaction
 
 
 class CustomerSerializer(serializers.ModelSerializer):
