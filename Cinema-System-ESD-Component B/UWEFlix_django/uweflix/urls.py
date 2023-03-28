@@ -38,8 +38,8 @@ urlpatterns = [
     path("view_order_history/", views.view_order_history, name="view_order_history"),
     path("request_cancellation/", views.request_cancellation, name="request_cancellation"),
     path("approve_cancellations/", views.approve_cancellation, name="approve_cancellations"),
+    path("screens_endpoint/", views.screens_endpoint, name="screens_endpoint"),
     path("add_screen/", views.add_screen, name="add_screen"),
-    path("showing_endpoint/", views.showing_endpoint, name="showing_endpoint"),
     path("add_showing/", views.add_showing, name="add_showing"),
     path('edit_showing/<int:showing_id>/', views.edit_showing, name='edit_showing'),
 ]
