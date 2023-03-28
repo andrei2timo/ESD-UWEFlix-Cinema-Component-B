@@ -11,6 +11,7 @@ urlpatterns = [
     path("viewings/", views.viewings, name="viewings"),
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
     path("add_film/", views.add_film, name="add_film"),
+    path("add_film_with_django_REST_framework/", views.add_film_with_django_REST_framework, name="add_film_with_django_REST_framework"),
     path("login/", views.login, name="login"),
     path("topup/", views.topup, name="topup"),
     path("logout/", views.logout, name="logout"),

@@ -1,23 +1,19 @@
-from multiprocessing import context
-from sys import float_repr_style
-from urllib import request
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse
-from django.template import ContextPopException
 from django.views.generic import *
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
 import calendar
-#from uweflix.decorators import unauthenticated_user
 from .models import *
 from datetime import datetime as dt
 from .forms import *
-#from .decorators import unauthenticated_user
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
+from django.contrib import messages
+from rest_framework.decorators import api_view
+from .serializers import FilmSerializer
+from rest_framework.response import Response
+from rest_framework import status
 
 def account_modify(request):
     form = SelectUserForm()
@@ -100,7 +96,13 @@ def showings(request, film):
     context = {'showings':showings, 'film':film}
     return render(request, 'uweflix/showings.html', context)
 
-from django.contrib import messages
+@api_view(['POST'])
+def add_film_with_django_REST_framework(request):
+    serializer = FilmSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def add_film(request):
     form = deleteFilmForm()
