@@ -69,39 +69,43 @@ class SelectUserForm(forms.Form):
 
 class AccessClubForm(forms.Form):
     today = date.today()
-    club_choices = ((None, "Select a club:"),)
-    month_choices = ()
-    year_choices = ()
-    current_year = today.year
-    for i in range(Club.objects.all().count()):
-        tmp = ((Club.objects.get(id=i+1).id, Club.objects.get(id=i+1).name),)
-        club_choices += tmp
-    for i in range(12):
-        choice_string = ""
-        if i < 9:
-            choice_string += "0"
-        tmp = ((i+1, choice_string+str(i+1)),)
-        month_choices += tmp
-    for i in range(15):
-        tmp = ((current_year+i,current_year+i),)
-        year_choices += tmp
+    club_choices = ((None, "Select a club:"),) + \
+        tuple((club.id, club.name) for club in Club.objects.all())
+    month_choices = ((i, f"{i:02d}") for i in range(1, 13))
+    year_choices = ((i, str(i)) for i in range(today.year, today.year+15))
     club = forms.ChoiceField(choices=club_choices)
     card_number = forms.DecimalField(max_digits=16, decimal_places=0)
     expiry_month = forms.ChoiceField(choices=month_choices)
     expiry_year = forms.ChoiceField(choices=year_choices)
 
     def clean(self):
+        club = self.cleaned_data.get('club')
+        if not club:
+            raise forms.ValidationError("Club is required.")
+
         card_number = self.cleaned_data.get('card_number')
         expiry_month = self.cleaned_data.get('expiry_month')
         expiry_year = self.cleaned_data.get('expiry_year')
+
         try:
             if len(str(int(card_number))) < 16:
-                raise forms.ValidationError("Card number is less than 16 digits.")
+                raise forms.ValidationError(
+                    "Card number is less than 16 digits.")
         except:
-            raise forms.ValidationError("Card number is invalid. It must be 16 digits.")
-        expiry_date = date(int(expiry_year), int(expiry_month), calendar.monthrange(int(expiry_year), int(expiry_month))[1])
-        if expiry_date < self.today:
-            raise forms.ValidationError("The expiry date entered has already passed.")
+            raise forms.ValidationError(
+                "Card number is invalid. It must be 16 digits.")
+
+        expiry_date = date(int(expiry_year), int(expiry_month), calendar.monthrange(
+            int(expiry_year), int(expiry_month))[1])
+        if expiry_date < date.today():
+            raise forms.ValidationError(
+                "The expiry date entered has already passed.")
+
+        # Print out the selected club and payment details
+        print(f"Selected club: {club}")
+        print(
+            f"Payment details - Card number: {card_number}, Expiry: {expiry_month}/{expiry_year}")
+
         return self.cleaned_data
 
 class PaymentForm(forms.Form):
