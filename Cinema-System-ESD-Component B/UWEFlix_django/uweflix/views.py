@@ -235,7 +235,7 @@ def edit_film(request):
 @api_view(['GET','POST'])
 def screens_endpoint(request):
     if request.method == 'GET':
-        screens = Showing.objects.all()
+        screens = Screen.objects.all()
         serializer = ScreenSerializer(screens, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
@@ -303,6 +303,19 @@ def add_screen(request):
     context['form1'] = form1
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
+
+@api_view(['GET','POST']) # @here see if this works with relations
+def showings_endpoint(request):
+    if request.method == 'GET':
+        showings = Showing.objects.all()
+        serializer = ShowingSerializer(showings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializer = ShowingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def add_showing(request):
     context = {}
