@@ -5,6 +5,16 @@ Set Payment Details
 {% endblock %}
 {% block content %}
 <h1>Set Club Payment Details</h1>
+{% if success_message %}
+    <div class="alert alert-success">
+        Club {{ club }} payment details have been updated:
+        <ul>
+            <li>Card Number: {{ card_number }}</li>
+            <li>Expiry Date: {{ expiry_month }}/{{ expiry_year }}</li>
+
+        </ul>
+    </div>
+{% endif %}
 <form method="POST">
     {% csrf_token %}
     <div class="form-area">

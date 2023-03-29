@@ -18,6 +18,8 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
+import re
+
 
 def account_modify(request):
     form = SelectUserForm()
@@ -25,6 +27,184 @@ def account_modify(request):
         'form':form
     }
     return render(request, 'uweflix/account_modify.html', context)
+
+def manage_accounts(request):  # Manage Accounts
+    user_list = User.objects.all()
+    context = {
+        'user_list': user_list
+    }
+
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def add_user(request):
+    if request.method == "POST":
+        try:
+            first_name = request.POST['first_name']
+            if not first_name or any(char.isdigit() for char in first_name):
+                raise ValueError("Invalid first name")
+            last_name = request.POST['last_name']
+            if not last_name or any(char.isdigit() for char in last_name):
+                raise ValueError("Invalid last name")
+            username = request.POST['username']
+            if not username:
+                raise ValueError("Please enter a valid username")
+            email = request.POST['email']
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                raise ValueError("Invalid email")
+
+            user = User(first_name=first_name, last_name=last_name,
+                        username=username, email=email)
+            user.save()
+            messages.success(request, "User added successfully")
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('manage_accounts')
+    else:
+        pass
+
+    user_list = User.objects.all()
+    context = {
+        'user_list': user_list
+    }
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def delete_user(request, myid):  # Manage Accounts
+    user = User.objects.get(id=myid)
+    user.delete()
+    messages.info(request, 'USER DELETED SUCCESSFULLY')
+    return redirect(manage_accounts)
+
+
+def edit_user(request, myid):  # Manage Accounts
+    sel_user = User.objects.get(id=myid)
+    user_list = User.objects.all()
+    context = {
+        'sel_user': sel_user,
+        'user_list': user_list
+    }
+    return render(request, 'uweflix/manage_accounts.html', context)
+
+
+def update_user(request, myid):  # Manage Accounts
+    user = User.objects.get(id=myid)
+    user.first_name = request.POST['first_name']
+    user.Last_name = request.POST['last_name']
+    user.username = request.POST['username']
+    user.email = request.POST['email']
+    user.save()
+    messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('manage_accounts')
+
+def manage_club_account(request):  # Manage Clubs
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def manage_club_account(request):  # Manage Clubs
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def add_clubs(request):  # Manage Clubs
+    if request.method == "POST":
+        name = request.POST.get('name', '').strip()
+        street_number = request.POST.get('street_number', '').strip()
+        street = request.POST.get('street', '').strip()
+        city = request.POST.get('city', '').strip()
+        post_code = request.POST.get('post_code', '').strip()
+        landline_number = request.POST.get('landline_number', '').strip()
+        mobile_number = request.POST.get('mobile_number', '').strip()
+        email = request.POST.get('email', '').strip()
+
+        try:
+            # Check if name is empty
+            if not name:
+                raise ValueError("Please enter a valid name.")
+
+            # Check if street number is empty or contains non-digits
+            if not street_number or not street_number.isdigit():
+                raise ValueError("Please enter a valid street number.")
+
+            # Check if street is empty
+            if not street:
+                raise ValueError("Please enter a valid street name.")
+
+            # Check if city is empty
+            if not city:
+                raise ValueError("Please enter a valid city name.")
+
+            # Check if post code is empty or contains non-alphanumeric characters
+            if not post_code or not post_code.isalnum():
+                raise ValueError("Please enter a valid post code.")
+
+            # Check if landline number is empty or contains non-digits
+            if landline_number and not landline_number.isdigit():
+                raise ValueError("Please enter a valid landline number.")
+
+            # Check if mobile number is empty or contains non-digits
+            if mobile_number and not mobile_number.isdigit():
+                raise ValueError("Please enter a valid mobile number.")
+
+            # Check if email is valid
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                raise ValueError("Please enter a valid email.")
+
+            club = Club(name=name, street_number=street_number, street=street, city=city,
+                        post_code=post_code, landline_number=landline_number, mobile_number=mobile_number, email=email)
+            club.save()
+            messages.success(request, "Club added successfully")
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('manage_club_account')
+
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def delete_clubs(request, myid):  # Manage Accounts
+    clubs = Club.objects.get(id=myid)
+    clubs.delete()
+    messages.info(request, 'CLUB DELETED SUCCESSFULLY')
+    return redirect(manage_club_account)
+
+
+def edit_clubs(request, myid):  # Manage Accounts
+    sel_clubs = Club.objects.get(id=myid)
+    club_list = Club.objects.all()
+    context = {
+        'sel_clubs': sel_clubs,
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/manage_club_account.html', context)
+
+
+def update_clubs(request, myid):  # Manage Accounts
+    clubs = Club.objects.get(id=myid)
+    clubs.name = request.POST['name']
+    clubs.street_number = request.POST['street_number']
+    clubs.street = request.POST['street']
+    clubs.city = request.POST['city']
+    clubs.post_code = request.POST['post_code']
+    clubs.landline_number = request.POST['landline_number']
+    clubs.mobile_number = request.POST['mobile_number']
+    clubs.email = request.POST['email']
+    clubs.save()
+    messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('manage_club_account')
+
     
 '''
 def registerPage(request):
@@ -686,6 +866,18 @@ def set_payment_details(request):
             formatted_date = f"{year}-{month}-{calendar.monthrange(int(year), int(month))[1]}"
             club_obj.card_expiry_date = formatted_date
             club_obj.save()
+
+            # Success message variables
+            club_name = club_obj.name
+            card_number = form.cleaned_data['card_number']
+            expiry_month = form.cleaned_data['expiry_month']
+            expiry_year = form.cleaned_data['expiry_year']
+            success_message = True
+            context.update({'success_message': success_message,
+                            'club_name': club_name,
+                            'card_number': card_number,
+                            'expiry_month': expiry_month,
+                            'expiry_year': expiry_year})
         else:
             context = {'form': form}
     return render(request, "uweflix/set_payment.html", context)

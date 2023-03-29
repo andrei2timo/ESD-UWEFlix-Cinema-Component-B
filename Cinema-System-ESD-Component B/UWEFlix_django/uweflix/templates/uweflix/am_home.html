@@ -74,12 +74,20 @@ Account Manager Home Page
        </a>
     </div>
 
+   
     <div class="flex-child">
-        <h2>Amend Account Information</h2></br>
-        <h3>Change account details for an existing user.</h3></br>
-        <a href="{% url 'account_modify' %}">
-          <input type="button" value="Amend Account" class="accountManagerHomeButtons" />
-       </a>
-    </div>
+      <h2>Amend Account Information</h2></br>
+      <h3>Change account details for an existing user.</h3></br>
+      <a href="{% url 'manage_accounts' %}">
+        <input type="button" value="Amend Accounts" class="accountManagerHomeButtons" />
+     </a>
+  </div>
+  <div class="flex-child">
+    <h2>Amend Club Account Information</h2></br>
+    <h3>Change account details for existing clubs.</h3></br>
+    <a href="{% url 'manage_club_account' %}">
+      <input type="button" value="Amend Club Accounts" class="accountManagerHomeButtons" />
+   </a>
+</div>
 </div>
 {% endblock %}

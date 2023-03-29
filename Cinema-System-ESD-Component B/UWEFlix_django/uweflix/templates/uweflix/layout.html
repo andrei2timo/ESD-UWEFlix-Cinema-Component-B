@@ -68,9 +68,13 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'club_discount' %}">Club Discount</a>
                 </li>
+                 <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'manage_accounts' %}">Manage Accounts</a>
+                </li>       
+                
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'account_modify' %}">Amend Account</a>
-                </li>                                
+                    <a class="nav-link" href="{% url 'manage_club_account' %}">Manage Club Accounts</a>
+                </li>                               
                 {% endif %}
             </ul>
             {% if request.session.user_id is None %}

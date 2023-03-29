@@ -1,0 +1,127 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Account Modify
+{% endblock %}
+{% block content %}
+<h1>Manage Accounts</h1>
+<hr/>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd"
+      });
+    } );
+</script>
+
+
+<div class="container mt-3">
+
+
+    {% for message in messages %}
+    <p class='alert alert-success mt-3'>{{message}}</p>
+    {%endfor%}
+
+
+
+
+    {% if sel_user %}
+    <form method="POST" action="{% url 'update_user' sel_user.id%}">
+      {% csrf_token %}
+      <div class="form-group mb-3"> 
+        <label> First Name: </label>
+        <input type="text" class="form-control" value="{{sel_user.first_name}}" name="first_name" placeholder="Enter First Name">
+    </div>
+    <div class="form-group mb-3"> 
+      <label> Last Name: </label>
+      <input type="text" class="form-control" value="{{sel_user.last_name}}" name="last_name" placeholder="Enter Last Name">
+  </div>
+     <div class="form-group mb-3"> 
+         <label> User Name: </label>
+         <input type="text" class="form-control" value="{{sel_user.username}}" name="username" placeholder="Enter Username">
+     </div>
+
+     <div class="form-group mb-3"> 
+         <label> Enter Email: </label>
+         <input type="text" class="form-control" value="{{sel_user.email}}" name="email" placeholder="Enter Email">
+     </div>
+
+         <div class="text-center mt-4">
+             <button type="submit" class="btn btn-success">UPDATE</button>
+         </div>
+     </div> 
+ </form>
+
+    {% else %}
+
+    <form method="POST" action="{% url 'add_user' %}">
+         {% csrf_token %}
+         <div class="form-group mb-3"> 
+          <label> First Name: </label>
+          <input type="text" class="form-control" name="first_name" placeholder="Enter First Name">
+      </div>
+      <div class="form-group mb-3"> 
+        <label> Last Name: </label>
+        <input type="text" class="form-control" name="last_name" placeholder="Enter Last Name">
+    </div>
+        <div class="form-group mb-3"> 
+            <label> User Name: </label>
+            <input type="text" class="form-control" name="username" placeholder="Enter Username">
+        </div>
+
+        <div class="form-group mb-3"> 
+            <label> Enter Email: </label>
+            <input type="text" class="form-control" name="email" placeholder="Enter Email">
+        </div>
+
+
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">SAVE</button>
+            </div>
+        </div> 
+    </form>
+    
+
+    {% endif %}
+
+    <div class="mt-5" >
+        <table class="table" >
+            <thead>
+              <tr>
+                <th scope="col">User No.</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Edit</th>
+                <th>Delete</h1>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in user_list %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.first_name}}</td>
+                <td>{{i.last_name}}</td>
+                <td>{{i.username}}</td>
+                <td>{{i.email}}</td>
+                <td>
+                    <a href="{% url 'edit_user' i.id%}" class="btn btn-warning">EDIT</a>
+                </td>
+                <td>
+                    <a href="{% url 'delete_user' i.id%}" class="btn btn-danger">DELETE</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    
+</div>
+
+ 
+
+
+
+{% endblock %}
