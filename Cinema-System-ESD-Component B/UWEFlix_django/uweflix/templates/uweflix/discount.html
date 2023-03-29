@@ -1,9 +1,94 @@
 {% extends "uweflix/layout.html" %}
-{% load static %}
 {% block title %}
-Account Modify
+Discount
 {% endblock %}
 {% block content %}
-<h1>Club Discount</h1>
+
+<style>
+    h1 {
+        text-align: center;
+        margin: 20px;
+    }
+    #discountAmount {
+        text-align: center;
+        margin: 10px;
+        font-size: 50px;
+    }
+    .discountAmountButton {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+    .flex-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flex-container > div {
+        margin: 10px;
+        padding: 20px;
+        font-size: 30px;
+    }
+    .submitDiscount {
+        display: inline-block;
+        width: 200px;
+        padding: 5px;
+        margin: 25px 0; 
+        background-color: #ffc107;
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 0 5px 4px rgba(211,211,211,0.8);
+    }
+
+</style>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h1>Add Discount</h1>
+<p id="discountAmount">0%</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="flex-container">
+        {{ form.club_rep }}
+    </div>
+    <div class="flex-container">
+        <input type="hidden" name="discountValue" id="discountValueForm" />
+        <div><button class="submitDiscount">Submit</button></div>
+    </div>
+    <div class="flex-container">
+        <div><button type="button" onclick="change_discountAmount('5')" class="discountAmountButton">5%</button></div>
+        <div><button type="button" onclick="change_discountAmount('10')" class="discountAmountButton">10%</button></div>
+        <div><button type="button" onclick="change_discountAmount('15')" class="discountAmountButton">15%</button></div>
+        <div><button type="button" onclick="change_discountAmount('20')" class="discountAmountButton">20%</button></div>
+    </div>
+    <div class="flex-container">
+        <div><button type="button" onclick="change_discountAmount('25')" class="discountAmountButton">25%</button></div>
+        <div><button type="button" onclick="change_discountAmount('30')" class="discountAmountButton">30%</button></div>
+        <div><button type="button" onclick="change_discountAmount('35')" class="discountAmountButton">35%</button></div>
+        <div><button type="button" onclick="change_discountAmount('50')" class="discountAmountButton">50%</button></div>
+    </div>
+</form>
+
+<script>
+function change_discountAmount(percentage) {
+    document.getElementById("discountAmount").innerHTML = percentage + "%";
+    document.getElementById("discountValueForm").value = percentage;
+}
+</script>
 
 {% endblock %}

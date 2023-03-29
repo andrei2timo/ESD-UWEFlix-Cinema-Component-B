@@ -14,6 +14,10 @@ import calendar
     class Meta:
         model = ClubRep"""
 
+class DiscountForm(forms.Form):
+    club_rep = forms.ModelChoiceField(queryset=ClubRep.objects.all(), label="Select Club Rep")
+    discountValue = forms.IntegerField(label="Discount Value")
+
 class SearchClubRepForm(forms.Form):
     clubrep_choices = ()
     timerange_choices = ((None, "Select a statement:"),
