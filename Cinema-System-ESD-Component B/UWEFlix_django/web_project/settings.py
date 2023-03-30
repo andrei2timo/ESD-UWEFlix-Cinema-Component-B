@@ -139,3 +139,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uweflix/static/uweflix/images')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51MrK50Gq4yV3NKMncWnQxNnetdvb3IYkALJ3AvsKX4WMFSr2DDhPzpdBh5BJKG2ONI69B0LdtAEl5jORzuI1UWV800TK1vqkMr'
+STRIPE_SECRET_KEY = 'sk_test_51MrK50Gq4yV3NKMnT1bHMZEVRpZbd6TF4lHB2e4xOhUpfmwQO3wZVX7uSAYE1jmn63RBdqPlCsjCNFYJkXMI9BoM0075fstJKV'
