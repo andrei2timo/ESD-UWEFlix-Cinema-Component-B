@@ -1,0 +1,219 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Account Modify
+{% endblock %}
+{% block content %}
+<h1>Modify,Delete Accounts</h1>
+<hr/>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd"
+      });
+    } );
+</script>
+
+
+<div class="container mt-3">
+
+
+    {% for message in messages %}
+    <p class='alert alert-success mt-3'>{{message}}</p>
+    {%endfor%}
+
+
+
+
+    {% if sel_account %}
+    <form method="POST" action="{% url 'update_account' sel_account.id%}">
+      {% csrf_token %}
+      <div class="form-group mb-3"> 
+        <label> Acc. First Name: </label>
+        <input type="text" class="form-control" value="{{sel_account.first_initial}}" name="first_initial" placeholder=" First Initial">
+      </div>
+      <div class="form-group mb-3"> 
+        <label> Acc. Second Name: </label>
+        <input type="text" class="form-control" value="{{sel_account.last_name}}" name="last_name" placeholder=" Last Name">
+      </div>
+      <div class="form-group">
+        <label for="club">Club:</label>
+        <select class="form-control" id="club" name="club">
+            {% for club in club_list %}
+            <option value="{{ club.id }}" {% if sel_account.club.id == club.id %}selected{% endif %}>{{ club.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+      <div class="form-group mb-3"> 
+        <label> Acc. Card Number: </label>
+        <input type="text" class="form-control" value="{{sel_account.card_number}}" name="card_number" placeholder="Card Number">
+      </div>
+      <div class="form-group mb-3"> 
+        <label> Acc. Card Expiry Date: </label>
+          <input type="text" class="form-control"  value="{{sel_account.expiry_month}}" name="expiry_month" placeholder="MM" maxlength="2" required>
+          <span class="input-group-text">/</span>
+          <input type="text" class="form-control" value="{{sel_account.expiry_year}}" name="expiry_year" placeholder="YYYY" maxlength="4" required>
+
+      </div>
+         <div class="text-center mt-4">
+             <button type="submit" class="btn btn-success">UPDATE</button>
+         </div>
+     </div> 
+     
+ </form>
+
+    {% else %}
+
+    <form method="POST" action="{% url 'create_account' %}">
+         {% csrf_token %}
+         <div class="form-group mb-3"> 
+          <label> Unique Account Number: </label>
+          <input type="text" class="form-control" name="random_num_generator" value="{{ random_num_generator }}" readonly>
+      </div>
+        <div class="form-group mb-3"> 
+          <label> Acc. First Name: </label>
+          <input type="text" class="form-control" name="first_initial" placeholder="Acc. First Initial:">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Acc. Second Name: </label>
+            <input type="text" class="form-control" name="last_name" placeholder="Acc. Second Name:">
+        </div>
+        <div class="form-group">
+          <label for="club">Club:</label>
+          <select class="form-control" id="club" name="club">
+              {% for club in club_list %}
+              <option value="{{ club.id }}">{{ club.name }}</option>
+              {% endfor %}
+          </select>
+      </div>
+        <div class="form-group mb-3"> 
+            <label> Acc. Card Number: </label>
+            <input type="text" class="form-control" name="card_number" placeholder="Acc. Card Number:">
+        </div>
+        <div class="form-group mb-3"> 
+          <label> Acc. Card Expiry Date: </label>
+            <input type="text" class="form-control"  value="{{sel_account.expiry_month}}" name="expiry_month" placeholder="MM" maxlength="2" required>
+            <span class="input-group-text">/</span>
+            <input type="text" class="form-control" value="{{sel_account.expiry_year}}" name="expiry_year" placeholder="YYYY" maxlength="4" required>
+        </div>
+      
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">SAVE</button>
+            </div>
+        </div> 
+    </form>
+    
+    
+
+    {% endif %}
+
+    <div class="mt-5" >
+        <table class="table" >
+            <thead>
+              <tr>
+                <th scope="col">Acc. No.</th>
+                <th scope="col">Acc. First Name</th>
+                <th scope="col">Acc. Second Name</th>
+                <th scope="col">Acc. Club</th>
+                <th scope="col">Acc. Card Number</th>
+                <th scope="col">Acc. Expiry Date</th>
+                <th scope="col">Acc. Unique Account Number</th>
+            
+                <th scope="col">View</th>
+                <th scope="col">Edit</th>
+                <th>Delete</h1>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in account_list %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.first_initial}}</td>
+                <td>{{i.last_name}}</td>
+                <td>{{i.club}}</td>
+                <td>{{i.card_number}}</td>
+               <td>{{ i.expiry_month }}/{{ i.expiry_year }}</td>
+               <td>{{ i.random_num_generator }}</td>
+
+               <script>
+                function showPopup(firstInitial, lastName, club, cardNumber, expiryDate) {
+       
+                  // Get the lightbox element
+                  var lightbox = document.getElementById("lightbox");
+                
+                  // Set the values for the fields in the lightbox
+                  lightbox.querySelector("#lightbox-first-name").innerHTML = firstInitial;
+                  lightbox.querySelector("#lightbox-last-name").innerHTML = lastName;
+                  lightbox.querySelector("#lightbox-club").innerHTML = club;
+                  lightbox.querySelector("#lightbox-card-number").innerHTML = cardNumber;
+                  lightbox.querySelector("#lightbox-expiry-date").innerHTML = expiryDate;
+           
+                
+                  // Show the lightbox
+                  lightbox.style.display = "block";
+                }
+                </script>
+
+
+                  <!-- Lightbox HTML -->
+    <div id="lightbox" style="display: none;">
+      <div class="lightbox-content">
+        <h2>Account Details</h2>
+        <hr>
+        <div class="row">
+          <div class="col-sm-6">
+            <strong>First Name:</strong>
+            <span id="lightbox-first-name"></span>
+          </div>
+          <div class="col-sm-6">
+            <strong>Last Name:</strong>
+            <span id="lightbox-last-name"></span>
+          </div>
+          <div class="col-sm-6">
+            <strong>Club:</strong>
+            <span id="lightbox-club"></span>
+          </div>
+          <div class="col-sm-6">
+            <strong>Card Number:</strong>
+            <span id="lightbox-card-number"></span>
+          </div>
+          <div class="col-sm-6">
+            <strong>Expiry Date:</strong>
+            <span id="lightbox-expiry-date"></span>
+          </div>
+          
+
+        </div>
+
+
+        <hr>
+
+       
+
+      
+      <button class="btn btn-secondary" onclick="document.getElementById('lightbox').style.display='none'">Close</button>
+
+    </div>
+  </div>             
+
+
+
+  <td>
+    <button class="btn btn-success" onclick="showPopup('{{i.first_initial}}', '{{i.last_name}}', '{{i.club}}', '{{i.card_number}}', '{{i.expiry_month}}/{{i.expiry_year}}')">VIEW</button>
+  </td>
+
+                <td>
+                    <a href="{% url 'edit_account' i.id%}" class="btn btn-warning">EDIT</a>
+                </td>
+                <td>
+                    <a href="{% url 'delete_account' i.id%}" class="btn btn-danger">DELETE</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    
+</div>
+{% endblock %}
