@@ -629,50 +629,6 @@ def showings_endpoint(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# def add_showing(request):
-#     context = {}
-#     form = addShowingForm
-#     showings = Showing.objects.all()
-#     options = [showing.id for showing in showings]
-#     if showings:
-#         context['options'] = options
-#     if request.method == "POST":
-#         form = addShowingForm(request.POST)
-#         if form.is_valid():
-#             id = form.cleaned_data['id']
-#             screen = form.cleaned_data['screen']
-#             film = form.cleaned_data['film']
-#             time = form.cleaned_data['time']
-#             Showing.newShowing(screen,film,time)
-#     context['form'] = form
-#     return render(request, 'uweflix/add_showing.html', context)
-
-# def edit_showing(request, showing_id):
-#     form = editShowingForm()
-#     context = {"form":form}
-#     showing = get_object_or_404(Showing, id=showing_id)
-#     if 'edit_showing' in request.POST:
-#         screen = request.POST.get("Screen")
-#         film = request.POST.get("Film")
-#         time = request.POST.get("Time")
-#         try:
-#             showing = Film.objects.get(id=showing_id)
-#             if time is not None:
-#                 showing.screen = screen
-#                 showing.film = film
-#                 showing.time = time       
-#                 if form.is_valid():
-#                     form.save()
-#                 showing.save()
-#                 messages.success(request, 'Showing updated successfully!')
-#             else:
-#                 messages.error(request, 'Invalid time')
-#         except Showing.DoesNotExist:
-#                 messages.error(request, "Showing doesn't exists")
-#     #else:
-#         #form = editShowingForm(instance=showing)
-#     context['form'] = form
-#     return render(request, 'uweflix/edit_showing.html', context)
 
 def add_showing(request):
     context = {}
@@ -713,7 +669,7 @@ def edit_showing(request, showing_id):
             form.save()
             messages.success(request, 'Showing updated successfully!')
             
-            return redirect('add_showing')  # Replace 'add_showing' with the name of the view you want to redirect to after a successful edit
+            return redirect('add_showing')
         else:
             messages.error(request, 'Error updating the showing. Please check the form for any mistakes.')
 
