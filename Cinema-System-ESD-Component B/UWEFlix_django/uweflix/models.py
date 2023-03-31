@@ -6,6 +6,8 @@ from django.db import models
 from django.contrib.auth.models import *
 from datetime import datetime as dt
 import datetime
+import random
+
 
 from django.forms import ValidationError
 
@@ -332,3 +334,23 @@ class Prices(models.Model):
     def getCurrentPrices():
         currentPrices = Prices.objects.last()
         return currentPrices.adult, currentPrices.student, currentPrices.child
+    
+    
+  
+class Account(models.Model):
+    random_num_generator = models.IntegerField(blank=True, null=True)
+    first_initial = models.CharField(max_length=1, default='')
+    last_name = models.CharField(max_length=50)
+    club = models.ForeignKey('Club', on_delete=models.CASCADE)
+    card_number = models.CharField(max_length=16)
+    expiry_year = models.IntegerField(default=timezone.now().year)
+    expiry_month = models.CharField(max_length=2, default='')
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def save(self, *args, **kwargs):
+        if not self.random_num_generator:
+            self.random_num_generator = random.randint(0000, 9999)
+        super().save(*args, **kwargs)
+
