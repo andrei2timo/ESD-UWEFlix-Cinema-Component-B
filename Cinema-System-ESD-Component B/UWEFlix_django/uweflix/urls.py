@@ -69,4 +69,5 @@ urlpatterns = [
     path("add_screen/", views.add_screen, name="add_screen"),
     path("add_showing/", views.add_showing, name="add_showing"),
     path('edit_showing/<int:showing_id>/', views.edit_showing, name='edit_showing'),
+    path('delete_showing/<int:showing_id>', views.delete_showing, name='delete_showing'),
 ]
