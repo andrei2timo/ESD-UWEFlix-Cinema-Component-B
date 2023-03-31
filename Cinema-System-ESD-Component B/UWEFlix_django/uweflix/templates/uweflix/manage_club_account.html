@@ -1,0 +1,169 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Account Modify
+{% endblock %}
+{% block content %}
+<h1>Manage Club Accounts</h1>
+<hr/>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd"
+      });
+    } );
+</script>
+
+
+<div class="container mt-3">
+
+
+    {% for message in messages %}
+    <p class='alert alert-success mt-3'>{{message}}</p>
+    {%endfor%}
+
+
+
+
+    {% if sel_clubs %}
+    <form method="POST" action="{% url 'update_clubs' sel_clubs.id%}">
+      {% csrf_token %}
+      <div class="form-group mb-3"> 
+        <label> Club Name: </label>
+        <input type="text" class="form-control" value="{{sel_clubs.name}}" name="name" placeholder="Enter Club Name">
+    </div>
+    <div class="form-group mb-3"> 
+      <label> Club Street Number: </label>
+      <input type="text" class="form-control" value="{{sel_clubs.street_number}}" name="street_number" placeholder="Enter Club Street Number">
+  </div>
+     <div class="form-group mb-3"> 
+         <label> Club Street: </label>
+         <input type="text" class="form-control" value="{{sel_clubs.street}}" name="street" placeholder="Enter Club Street">
+     </div>
+
+     <div class="form-group mb-3"> 
+         <label> Club City: </label>
+         <input type="text" class="form-control" value="{{sel_clubs.city}}" name="city" placeholder="Enter Club City">
+     </div>
+
+
+
+     <div class="form-group mb-3"> 
+        <label> Club Postcode: </label>
+        <input type="text" class="form-control" value="{{sel_clubs.post_code}}" name="post_code" placeholder="Enter Club Postcode">
+    </div>
+    <div class="form-group mb-3"> 
+        <label> Club LandLine Number: </label>
+        <input type="text" class="form-control" value="{{sel_clubs.landline_number}}" name="landline_number" placeholder="Enter Club Landline">
+    </div>
+    <div class="form-group mb-3"> 
+        <label> Club Mobile Number: </label>
+        <input type="text" class="form-control" value="{{sel_clubs.mobile_number}}" name="mobile_number" placeholder="Enter Club Mobile Number">
+    </div>
+    <div class="form-group mb-3"> 
+        <label> Club Email: </label>
+        <input type="text" class="form-control" value="{{sel_clubs.email}}" name="email" placeholder="Enter Club Email">
+    </div>
+
+         <div class="text-center mt-4">
+             <button type="submit" class="btn btn-success">UPDATE</button>
+         </div>
+     </div> 
+     
+ </form>
+
+    {% else %}
+
+    <form method="POST" action="{% url 'add_clubs' %}">
+         {% csrf_token %}
+        <div class="form-group mb-3"> 
+          <label> Club Name: </label>
+          <input type="text" class="form-control" name="name" placeholder="Enter Club Name">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club Street Number: </label>
+            <input type="text" class="form-control" name="street_number" placeholder="Enter Club Street Number">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club Street: </label>
+            <input type="text" class="form-control" name="street" placeholder="Enter Club Street">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club City: </label>
+            <input type="text" class="form-control" name="city" placeholder="Enter Club City">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club Postcode: </label>
+            <input type="text" class="form-control" name="post_code" placeholder="Enter Club Postcode">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club LandLine Number: </label>
+            <input type="text" class="form-control" name="landline_number" placeholder="Enter Club Landline Number">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club Mobile Number: </label>
+            <input type="text" class="form-control" name="mobile_number" placeholder="Enter Club Mobile Number">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Club Email: </label>
+            <input type="text" class="form-control" name="email" placeholder="Enter Club Email">
+        </div>
+
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">SAVE</button>
+            </div>
+        </div> 
+    </form>
+    
+
+    {% endif %}
+
+    <div class="mt-5" >
+        <table class="table" >
+            <thead>
+              <tr>
+                <th scope="col">Club No.</th>
+                <th scope="col">Club Name</th>
+                <th scope="col">Club Street Number</th>
+                <th scope="col">Club Street</th>
+                <th scope="col">Club City</th>
+                <th scope="col">Club Postcode</th>
+                <th scope="col">Club LandLine Number</th>
+                <th scope="col">Club Mobile Number</th>
+                <th scope="col">Club Email</th>
+                <th scope="col">Edit</th>
+                <th>Delete</h1>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in club_list %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.street_number}}</td>
+                <td>{{i.street}}</td>
+                <td>{{i.city}}</td>
+                <td>{{i.post_code}}</td>
+                <td>{{i.landline_number}}</td>
+                <td>{{i.mobile_number}}</td>
+                <td>{{i.email}}</td>
+                <td>
+                    <a href="{% url 'edit_clubs' i.id%}" class="btn btn-warning">EDIT</a>
+                </td>
+                <td>
+                    <a href="{% url 'delete_clubs' i.id%}" class="btn btn-danger">DELETE</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    
+</div>
+
+ 
+
+
+
+{% endblock %}

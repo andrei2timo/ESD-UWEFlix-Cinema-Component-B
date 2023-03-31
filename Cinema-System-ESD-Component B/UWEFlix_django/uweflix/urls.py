@@ -1,12 +1,22 @@
 from django.urls import path
 from uweflix import views
 from uweflix.models import *
-
+from .views import *
 
 
 urlpatterns = [
     path("club_discount/", views.clubdiscount, name="club_discount"),
     path("account_modify/", views.account_modify, name="account_modify"),
+    path("manage_accounts/", views.manage_accounts, name="manage_accounts"),
+    path('add_user', add_user, name='add_user'),
+    path('delete_user/<int:myid>/', delete_user, name='delete_user'),
+    path('edit_user/<int:myid>/', edit_user, name='edit_user'),
+    path('update_user/<int:myid>/', update_user, name='update_user'),
+    path('manage_club_account/', views.manage_club_account, name='manage_club_account'),
+    path('add_clubs', add_clubs, name='add_clubs'),
+    path('delete_clubs/<int:myid>/', delete_clubs, name='delete_clubs'),
+    path('edit_clubs/<int:myid>/', edit_clubs, name='edit_clubs'),
+    path('update_clubs/<int:myid>/', update_clubs, name='update_clubs'),
     path("", views.viewings, name="home"),
     path("viewings/", views.viewings, name="viewings"),
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
