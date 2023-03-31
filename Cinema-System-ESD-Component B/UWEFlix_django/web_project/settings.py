@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -128,11 +129,6 @@ STATIC_ROOT = BASE_DIR / 'static_collected'
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uweflix/static/uweflix/images')
-
-
-
-
-
 
 
 # Default primary key field type
