@@ -26,11 +26,11 @@ Customer Statements
     }
 
 </style>
-    <center>
+<center>
     <h1>Customer Statements</h1>
     <hr/>
     {% if transaction_list %}
-        <h3>Transaction Statement for Club Rep ({{club_rep_num}}):</h3>
+    <h3>Transaction Statement for Club Rep ({{club_rep_num}}) - Club: {{club_name}} - {{clubrep.club_rep_name}}:</h3>
         <br/>
         <table class="transaction_list">
             <thead>
@@ -41,6 +41,7 @@ Customer Statements
                     <th>Last Name</th>
                     <th>Cost</th>
                     <th>Paid</th>
+                  
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,8 @@ Customer Statements
                     <td>{{ transaction.customer.user.last_name }}</td>
                     <td>£{{ transaction.cost | floatformat:2 }}</td>
                     <td>{{ transaction.is_settled }}</td>
+                   
+                    
                 </tr>
             {% endfor %}
             </tbody>
@@ -74,5 +77,14 @@ Customer Statements
         <button type="submit" class="btn btn-warning">Search</button>
         </div>
     </form>
-    </center>
+</center>
+
+{% if club_rep_num %}
+    <script>
+        const clubRepNum = {{ club_rep_num }};
+        const clubReps = JSON.parse('{{ club_reps|escapejs }}');
+        const clubRep = clubReps.find(rep => rep.id === clubRepNum);
+        document.querySelector('h3').innerHTML = `Transaction Statement for Club Rep ${clubRepNum} - Club: ${clubRep.club.name}`;
+    </script>
+{% endif %}
 {% endblock %}

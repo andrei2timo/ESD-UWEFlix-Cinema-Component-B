@@ -74,7 +74,13 @@
                 
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'manage_club_account' %}">Manage Club Accounts</a>
-                </li>                               
+                </li> 
+                 <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'create_account' %}">Create an Account</a>
+                </li>      
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'modify_delete_accounts' %}">Modify and Delete Accounts</a>
+                </li>       
                 {% endif %}
             </ul>
             {% if request.session.user_id is None %}

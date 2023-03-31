@@ -9,11 +9,16 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
+
+import re
+import random
+
 from django.contrib import messages
 from rest_framework.decorators import api_view
 from .serializers import ClubSerializer, FilmSerializer, ScreenSerializer, ShowingSerializer
 from rest_framework.response import Response
 from rest_framework import status
+
 
 
 def account_modify(request):
@@ -200,6 +205,113 @@ def update_clubs(request, myid):  # Manage Accounts
     messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
     return redirect('manage_club_account')
 
+
+
+def create_account(request):  # Manage Clubs
+    club_list = Club.objects.all()
+    context = {
+        'club_list': club_list
+    }
+
+    return render(request, 'uweflix/create_account.html', context)
+
+
+def modify_delete_accounts(request):  # Manage Clubs
+    account_list = Account.objects.all()
+    club_list = Club.objects.all()
+    context = {
+        'account_list': account_list,
+        'club_list': club_list
+
+    }
+
+    return render(request, 'uweflix/modify_delete_accounts.html', context)
+
+
+def create_account(request):
+    if request.method == "POST":
+        try:
+            random_num_generator = request.POST.get(
+                'random_num_generator', None)
+            if random_num_generator:
+                random_num_generator = int(random_num_generator)
+            else:
+                random_num_generator = random.randint(1000, 9999)
+            first_initial = request.POST.get('first_initial', None)
+            if not first_initial or any(char.isdigit() for char in first_initial) or len(first_initial) != 1:
+                raise ValueError("Invalid first Initial")
+            last_name = request.POST.get('last_name', None)
+            if not last_name or any(char.isdigit() for char in last_name):
+                raise ValueError("Invalid last name")
+            club_id = request.POST.get('club', None)
+            club = Club.objects.get(id=club_id)
+            card_number = request.POST.get('card_number', None)
+            expiry_month = request.POST.get('expiry_month', None)
+            expiry_year = request.POST.get('expiry_year', None)
+
+            # Additional input validation
+            current_year = datetime.now().year
+            if not expiry_month.isdigit() or int(expiry_month) > 12:
+                raise ValueError("Invalid expiry month")
+            if not expiry_year.isdigit() or int(expiry_year) < current_year:
+                raise ValueError("Invalid expiry year")
+
+            account = Account(random_num_generator=random_num_generator, first_initial=first_initial, last_name=last_name, club=club,
+                              card_number=card_number, expiry_month=expiry_month, expiry_year=expiry_year)
+            account.save()
+            messages.success(
+                request, f"Account added successfully, the unique account number is: {random_num_generator}")
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('create_account')
+    else:
+        random_num_generator = random.randint(1000, 9999)
+
+    account_list = Account.objects.all()
+    club_list = Club.objects.all()
+    context = {
+        'account_list': account_list,
+        'club_list': club_list,
+        'random_num_generator': random_num_generator
+    }
+    return render(request, 'uweflix/create_account.html', context)
+
+
+def delete_account(request, myid):
+    account = Account.objects.get(id=myid)
+    account.delete()
+    messages.info(request, 'ACCOUNT DELETED SUCCESSFULLY')
+    return redirect(modify_delete_accounts)
+
+
+def edit_account(request, myid):  # Manage Accounts
+    sel_account = Account.objects.get(id=myid)
+    account_list = Account.objects.all()
+    club_list = Club.objects.all()
+    context = {
+        'sel_account': sel_account,
+        'account_list': account_list,
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/modify_delete_accounts.html', context)
+
+
+def update_account(request, myid):  # Manage Accounts
+    account = Account.objects.get(id=myid)
+    account.first_initial = request.POST['first_initial']
+    account.last_name = request.POST['last_name']
+    club_id = request.POST['club']
+    account.club = Club.objects.get(id=club_id)
+    account.card_number = request.POST['card_number']
+    account.expiry_month = request.POST['expiry_month']
+    account.expiry_year = request.POST['expiry_year']
+    account.save()
+    messages.info(request, "THE ACCOUNT HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('modify_delete_accounts')
+
+
+def view_account(request):
+    return render(request, 'uweflix/modify_delete_accounts.html')
     
 '''
 def registerPage(request):
@@ -870,27 +982,32 @@ def daily_transactions(request):
 
 def customer_statements(request):
     form = SearchClubRepForm()
-    context = {'form':form}
+    context = {'form': form}
     if request.method == "POST":
         form = SearchClubRepForm(request.POST)
         if form.is_valid():
-            clubrep = ClubRep.objects.get(club_rep_num=form.cleaned_data['clubrep_choice'])
+            clubrep = ClubRep.objects.get(
+                club_rep_num=form.cleaned_data['clubrep_choice']
+            )
             trange = form.cleaned_data['timerange_choice']
             if trange == 'Month':
                 transaction_list = Transaction.objects.filter(
                     customer=clubrep,
-                    date__year = dt.now().year,
-                    date__month = dt.now().month
+                    date__year=dt.now().year,
+                    date__month=dt.now().month,
+
                 )
             elif trange == "Year":
                 transaction_list = Transaction.objects.filter(
                     customer=clubrep,
-                    date__year = dt.now().year
+                    date__year=dt.now().year,
                 )
             context = {
                 'club_rep_num': clubrep.club_rep_num,
+                'club_name': clubrep.club.name,  # add club name to context
                 'transaction_list': transaction_list,
-                'form': form
+                'form': form,
+
             }
         return render(request, 'uweflix/customer_statements.html', context)
     else:

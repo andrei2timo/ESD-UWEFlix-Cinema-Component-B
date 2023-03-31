@@ -17,6 +17,19 @@ urlpatterns = [
     path('delete_clubs/<int:myid>/', delete_clubs, name='delete_clubs'),
     path('edit_clubs/<int:myid>/', edit_clubs, name='edit_clubs'),
     path('update_clubs/<int:myid>/', update_clubs, name='update_clubs'),
+    
+    
+    path('modify_delete_accounts/', views.modify_delete_accounts,
+         name='modify_delete_accounts'),
+    path('create_account/', create_account, name='create_account'),
+    path('delete_account/<int:myid>/', delete_account, name='delete_account'),
+    path('edit_account/<int:myid>/', edit_account, name='edit_account'),
+    path('update_account/<int:myid>/', update_account, name='update_account'),
+    path('view_account/', view_account, name='view_account'),
+
+    
+    
+    
     path("", views.viewings, name="home"),
     path("viewings/", views.viewings, name="viewings"),
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
