@@ -14,10 +14,27 @@ import calendar
     class Meta:
         model = ClubRep"""
 
+# The DiscountForm class defines a Django form that allows a user to select a ClubRep object and 
+# enter a discount value. The form has two fields: club_rep is a dropdown list of all ClubRep 
+# objects in the database, and discountValue is a field for entering an integer discount value.
+# This form can be used to collect input from users to create or update a discount record 
+# for a particular ClubRep. The club_rep field is used to determine which ClubRep the 
+# discount should apply to, and the discountValue field is used to set the value of the discount.
 class DiscountForm(forms.Form):
     club_rep = forms.ModelChoiceField(queryset=ClubRep.objects.all(), label="Select Club Rep")
     discountValue = forms.IntegerField(label="Discount Value")
 
+# The SearchClubRepForm class defines a Django form for searching for a specific ClubRep object 
+# and choosing a time range statement. The form has two fields: clubrep_choice is a dropdown list
+# of all ClubRep objects in the database, and timerange_choice is a dropdown list of statement 
+# options, which include Monthly or Annual.
+# The clubrep_choices variable is created by iterating over all ClubRep objects in the database 
+# and creating a tuple for each object with its club_rep_num and the ClubRep object itself. 
+# These tuples are then added to the clubrep_choices tuple of tuples.
+# This form can be used to collect input from users to search for a specific ClubRep 
+# object and select a statement time range. The clubrep_choice field is used to determine 
+# which ClubRep object the user wants to view statements for, and the timerange_choice 
+# field is used to determine whether the user wants to view Monthly or Annual statements.
 class SearchClubRepForm(forms.Form):
     clubrep_choices = ()
     timerange_choices = ((None, "Select a statement:"),

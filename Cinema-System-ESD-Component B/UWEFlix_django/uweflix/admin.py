@@ -6,6 +6,12 @@ from .models import User
 
 # Register your models here.
 
+# The register() method is called on the Django admin site object admin.site to register 
+# the models for use in the admin interface.
+# In this case, the User, Film, Customer, ClubRep, Showing, and Screen models are all being registered.
+# The second argument passed to the register() method is the custom admin class that will be used for the corresponding model in the admin interface. 
+# In the case of the User model, the custom admin class is CustomUserAdmin, which is defined earlier in the code.
+# By registering these models with their corresponding admin classes, the Django admin site will use the customizations provided by the admin classes when displaying and editing data for these models in the admin interface.
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
