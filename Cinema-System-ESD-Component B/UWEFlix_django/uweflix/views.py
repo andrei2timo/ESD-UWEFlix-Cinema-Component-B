@@ -20,7 +20,11 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-
+# This code defines a function named account_modify that renders a HTML template named 
+# 'uweflix/account_modify.html' along with a SelectUserForm instance. The template will
+#  use the form to allow users to select an account to modify. The context dictionary 
+# is used to pass the form instance to the template. Overall, this function provides 
+# a basic starting point for modifying user accounts within a larger web application.
 def account_modify(request):
     form = SelectUserForm()
     context = {
@@ -28,6 +32,12 @@ def account_modify(request):
     }
     return render(request, 'uweflix/account_modify.html', context)
 
+# This code defines a function named manage_accounts that retrieves a list 
+# of all user objects using the User.objects.all() method and passes it 
+# to a context dictionary. It then renders a HTML template named 
+# 'uweflix/manage_accounts.html' using the context. Overall, this function 
+# provides a way to manage user accounts by displaying a list of all user 
+# accounts within a larger web application.
 def manage_accounts(request):  # Manage Accounts
     user_list = User.objects.all()
     context = {
@@ -36,7 +46,17 @@ def manage_accounts(request):  # Manage Accounts
 
     return render(request, 'uweflix/manage_accounts.html', context)
 
-
+# This code defines a function named add_user that handles adding a new user to the system. 
+# If the request method is POST, it attempts to extract the user data from the request object 
+# and performs some basic validation on it. If any validation errors occur, an error message 
+# is displayed to the user and they are redirected back to the account management page. 
+# If the data is valid, a new User object is created with the extracted data and saved 
+# to the database. A success message is then displayed to the user. If the request method 
+# is not POST, it skips the validation and simply retrieves a list of all user objects 
+# from the database and passes it to a context dictionary. It then renders a HTML 
+# template named 'uweflix/manage_accounts.html' using the context. Overall, 
+# this function provides a way to add new user accounts to the system and display a 
+# list of all user accounts within a larger web application.
 def add_user(request):
     if request.method == "POST":
         try:
@@ -69,14 +89,24 @@ def add_user(request):
     }
     return render(request, 'uweflix/manage_accounts.html', context)
 
-
+# This code defines a function named `delete_user` that deletes a user with the given 
+# ID (`myid`) from the database using the `User.objects.get()` and `delete()` 
+# methods. It then displays a success message to the user and redirects 
+# them to the `manage_accounts` view using the `redirect()` function. 
+# Overall, this function provides a way to delete a user account from 
+# the system within a larger web application.
 def delete_user(request, myid):  # Manage Accounts
     user = User.objects.get(id=myid)
     user.delete()
     messages.info(request, 'USER DELETED SUCCESSFULLY')
     return redirect(manage_accounts)
 
-
+# This code defines a function named `edit_user` that retrieves a user with the 
+# given ID (`myid`) from the database using the `User.objects.get()` method and 
+# passes it to a context dictionary along with a list of all user objects. 
+# It then renders a HTML template named `'uweflix/manage_accounts.html'` using 
+# the context. Overall, this function provides a way to display the details 
+# of a user account for editing within a larger web application.
 def edit_user(request, myid):  # Manage Accounts
     sel_user = User.objects.get(id=myid)
     user_list = User.objects.all()
@@ -86,7 +116,14 @@ def edit_user(request, myid):  # Manage Accounts
     }
     return render(request, 'uweflix/manage_accounts.html', context)
 
-
+# This code defines a function named `update_user` that updates the details of a user 
+# account with the given ID (`myid`) using the data submitted in the request object. 
+# It retrieves the user object from the database using the `User.objects.get()` 
+# method and updates its fields with the submitted data using attribute assignment. 
+# It then saves the updated user object to the database using the `save()` method. 
+# A success message is then displayed to the user and they are redirected back to 
+# the account management page using the `redirect()` function. Overall, this function 
+# provides a way to update the details of a user account within a larger web application.
 def update_user(request, myid):  # Manage Accounts
     user = User.objects.get(id=myid)
     user.first_name = request.POST['first_name']
@@ -97,6 +134,11 @@ def update_user(request, myid):  # Manage Accounts
     messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
     return redirect('manage_accounts')
 
+# This code defines a function named `manage_club_account` that retrieves a list of 
+# all club objects from the database using the `Club.objects.all()` method and passes 
+# it to a context dictionary. It then renders a HTML template named `'uweflix/manage_club_account.html'` 
+# using the context. Overall, this function provides a way to display and manage a list of 
+# all club accounts within a larger web application.
 def manage_club_account(request):  # Manage Clubs
     club_list = Club.objects.all()
     context = {
@@ -105,7 +147,11 @@ def manage_club_account(request):  # Manage Clubs
 
     return render(request, 'uweflix/manage_club_account.html', context)
 
-
+# This code defines a function named `manage_club_account` that retrieves a list of all club objects 
+# from the database using the `Club.objects.all()` method and passes it to a context dictionary. 
+# It then renders a HTML template named `'uweflix/manage_club_account.html'` using the context. 
+# Overall, this function provides a way to display and manage a list of all club accounts within 
+# a larger web application.
 def manage_club_account(request):  # Manage Clubs
     club_list = Club.objects.all()
     context = {
@@ -114,7 +160,14 @@ def manage_club_account(request):  # Manage Clubs
 
     return render(request, 'uweflix/manage_club_account.html', context)
 
-
+# This code defines a view function named `add_clubs()` that handles a POST request to add a new club 
+# to the database. It first gets the data submitted in the request and performs some validation on the 
+# fields. If any field is invalid, it raises a ValueError with a corresponding error message and 
+# redirects the user back to the `manage_club_account` page with the error message displayed. 
+# If all fields are valid, it creates a new Club object with the data and saves it to the database, 
+# then redirects the user back to the `manage_club_account` page with a success message displayed.
+# Finally, it renders the `manage_club_account` page with a context containing a list of all clubs 
+# in the database.
 def add_clubs(request):  # Manage Clubs
     if request.method == "POST":
         name = request.POST.get('name', '').strip()
@@ -173,14 +226,19 @@ def add_clubs(request):  # Manage Clubs
     }
     return render(request, 'uweflix/manage_club_account.html', context)
 
-
+# This function deletes a club record from the database based on the given club ID and then 
+# redirects the user to the 'manage_club_account' page. A success message is displayed to 
+# the user to indicate that the club has been successfully deleted.
 def delete_clubs(request, myid):  # Manage Accounts
     clubs = Club.objects.get(id=myid)
     clubs.delete()
     messages.info(request, 'CLUB DELETED SUCCESSFULLY')
     return redirect(manage_club_account)
 
-
+# This function handles the editing of a club in the system. It retrieves the club's information 
+# from the database using the provided ID, and then renders a template to display the information 
+# and allow the user to edit it. The context dictionary includes the selected club's 
+# information and a list of all clubs in the system.
 def edit_clubs(request, myid):  # Manage Accounts
     sel_clubs = Club.objects.get(id=myid)
     club_list = Club.objects.all()
@@ -190,7 +248,12 @@ def edit_clubs(request, myid):  # Manage Accounts
     }
     return render(request, 'uweflix/manage_club_account.html', context)
 
-
+# This function updates the details of a club in the database based on the form submitted in the
+# corresponding HTML page. It takes a request object and an integer myid, which represents the 
+# id of the club that needs to be updated. It fetches the club object from the database using 
+# the myid parameter, and updates the fields of the club object based on the form data. 
+# Finally, it saves the updated club object and returns a redirect response to the manage_club_account 
+# view. A success message is also displayed to the user via the messages framework.
 def update_clubs(request, myid):  # Manage Accounts
     clubs = Club.objects.get(id=myid)
     clubs.name = request.POST['name']
@@ -205,8 +268,8 @@ def update_clubs(request, myid):  # Manage Accounts
     messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
     return redirect('manage_club_account')
 
-
-
+# This function renders the 'create_account.html' template which allows a user to create a new account. 
+# It fetches a list of all clubs from the database and passes it as context to the template.
 def create_account(request):  # Manage Clubs
     club_list = Club.objects.all()
     context = {
@@ -215,7 +278,9 @@ def create_account(request):  # Manage Clubs
 
     return render(request, 'uweflix/create_account.html', context)
 
-
+# This function renders the `modify_delete_accounts.html` template and passes `account_list` and 
+# `club_list` as context variables to display all the accounts and clubs in the system. It is used 
+# to manage accounts related to clubs in the system.
 def modify_delete_accounts(request):  # Manage Clubs
     account_list = Account.objects.all()
     club_list = Club.objects.all()
@@ -227,7 +292,13 @@ def modify_delete_accounts(request):  # Manage Clubs
 
     return render(request, 'uweflix/modify_delete_accounts.html', context)
 
-
+# This function creates a new account based on the user's input, and performs input validation to ensure 
+# the data entered is valid. If the request method is POST, it retrieves the user's input from the request
+# and creates a new Account object with the data. If the input is invalid, it raises a ValueError and 
+# redirects the user back to the create_account page. If the input is valid and the account is successfully 
+# created, it displays a success message with the unique account number. If the request method is not POST, 
+# it generates a random account number and displays the create_account page with the random number and a 
+# list of existing accounts and clubs.
 def create_account(request):
     if request.method == "POST":
         try:
@@ -276,14 +347,17 @@ def create_account(request):
     }
     return render(request, 'uweflix/create_account.html', context)
 
-
+# This function deletes an Account object from the database using the account ID passed as a parameter, 
+# and then redirects the user to the "modify_delete_accounts" page while displaying a success message.
 def delete_account(request, myid):
     account = Account.objects.get(id=myid)
     account.delete()
     messages.info(request, 'ACCOUNT DELETED SUCCESSFULLY')
     return redirect(modify_delete_accounts)
 
-
+# This function retrieves the selected account object with the given ID from the database and renders 
+# the 'modify_delete_accounts' template with the selected account object, all accounts, and all 
+# clubs as context variables.
 def edit_account(request, myid):  # Manage Accounts
     sel_account = Account.objects.get(id=myid)
     account_list = Account.objects.all()
@@ -295,7 +369,10 @@ def edit_account(request, myid):  # Manage Accounts
     }
     return render(request, 'uweflix/modify_delete_accounts.html', context)
 
-
+# This function updates an existing account with new information provided by the user. It retrieves 
+# the account information using its ID, updates its fields using the request.POST data, 
+# and then saves the changes to the database. Finally, it redirects the user to the 
+# 'modify_delete_accounts' page and displays a success message.
 def update_account(request, myid):  # Manage Accounts
     account = Account.objects.get(id=myid)
     account.first_initial = request.POST['first_initial']
@@ -309,7 +386,8 @@ def update_account(request, myid):  # Manage Accounts
     messages.info(request, "THE ACCOUNT HAS BEEN UPDATED SUCCESSFULLY")
     return redirect('modify_delete_accounts')
 
-
+# The `view_account` function renders the `modify_delete_accounts.html` template, 
+# which displays the list of accounts and clubs for managing accounts.
 def view_account(request):
     return render(request, 'uweflix/modify_delete_accounts.html')
     
@@ -338,9 +416,16 @@ def registerPage(request):
     return render(request, 'uweflix/register.html', context)
 '''    
 
+# This function renders the index.html template, which represents the home page of the UWEFlix web application.
 def home(request):
     return render(request, 'uweflix/index.html')
     
+# This function handles the club discounts feature of the web application. It displays a form to set 
+# a discount for a selected Club Representative, and updates the corresponding Club object in the 
+# database with the new discount rate. The function also retrieves a list of all Club Representatives 
+# to display on the page, and returns the rendered discount.html template with the context data. 
+# The function validates the form input and displays a success message if the discount is 
+# applied successfully.
 def clubdiscount(request):
     context = {}
     form = DiscountForm()
@@ -363,6 +448,9 @@ def clubdiscount(request):
     context['club_reps'] = club_reps
     return render(request, "uweflix/discount.html", context)
 
+# This function renders the "am_home.html" template and passes a context dictionary containing 
+# the number of transactions made today to the template. The template is used to display 
+# information about the daily transactions.
 def am_home(request):
     transactions = Transaction.objects.filter(date = dt.today())
     transactions = transactions.count()
@@ -371,9 +459,18 @@ def am_home(request):
     }
     return render(request, 'uweflix/am_home.html', context)
 
+# This function renders the 'club_rep_home.html' template, which is the home page for club 
+# representatives after they log in.
 def club_rep_home(request):
     return render(request, 'uweflix/club_rep_home.html')
 
+# This is a view function for the cinema manager's home page. It first checks if the user is 
+# a cinema manager by checking their user_group attribute in the session. If they are, it 
+# sets the context variable to include a boolean value indicating whether or not COVID-19 
+# restrictions are currently being applied. If the request method is POST, it loops through 
+# all screens and toggles the value of the apply_covid_restrictions attribute. Finally, it 
+# returns the cinema_manager_home.html template with the context variable. If the user is 
+# not a cinema manager, it redirects them to the index page.
 def cinema_manager_home(request):
     if request.session['user_group'] == "Cinema Manager":
         context = {}
@@ -392,20 +489,31 @@ def cinema_manager_home(request):
     else:
         return redirect('/')
 
+# This function renders the `student_home.html` template for the logged-in user who is a student.
 def student_home(request):
     return render(request, 'uweflix/student_home.html')
 
+# This function retrieves all the films from the database and renders them in the viewings.html template.
 def viewings(request):
     films = Film.objects.all()
     context = {'films':films}
     return render(request, 'uweflix/viewings.html', context)
 
+# This function retrieves all showings for a given film, orders them by time and renders the `showings.html` 
+# template with a context containing the retrieved showings and the film object.
 def showings(request, film):
     showings = Showing.objects.filter(film=film).order_by('time')
     film = Film.objects.get(pk=film)
     context = {'showings':showings, 'film':film}
     return render(request, 'uweflix/showings.html', context)
 
+# This is a view function decorated with the `@api_view` decorator which accepts GET and POST requests to 
+# the films endpoint. If the request method is GET, all films are retrieved from the database and 
+# serialized using the `FilmSerializer` and returned as a Response object with status 200 OK. If 
+# the request method is POST, the request data is deserialized using the `FilmSerializer`. 
+# If the data is valid, a new film object is created and saved to the database, and the serialized data 
+# is returned as a Response object with status 201 CREATED. If the data is invalid, the errors 
+# are returned as a Response object with status 400 BAD REQUEST.
 @api_view(['GET','POST'])
 def films_endpoint(request):
     if request.method == 'GET':
@@ -419,6 +527,13 @@ def films_endpoint(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# This is a Django Rest Framework API view that handles GET, PUT, and DELETE requests for a specific Film 
+# object identified by its primary key (pk). 
+# In case the requested Film object does not exist, it returns a 404 NOT FOUND response. If the request 
+# method is GET, it returns a serialized representation of the Film object. If the request method is 
+# PUT, it updates the Film object with the request data, validates it, and returns a serialized 
+# representation of the updated Film object. If the request method is DELETE, it deletes the Film object 
+# and returns a 204 NO CONTENT response.
 @api_view(['GET', 'PUT', 'DELETE']) 
 def specific_film_endpoint(request, pk): 
     try: 
@@ -438,6 +553,12 @@ def specific_film_endpoint(request, pk):
         film.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# This function is responsible for adding a film to the database, deleting a film from the database, 
+# and updating a film in the database. It uses the deleteFilmForm to handle the deletion of a film 
+# and displays the add_film.html template to the user to input details for a new film or edit 
+# an existing film. If the form data is valid and meets the required conditions, it saves the new 
+# film, updates the existing film, or deletes the film from the database and redirects the user 
+# to the same page with success or error messages displayed.
 def add_film(request):
     form = deleteFilmForm()
     context = {"form":form}
@@ -508,6 +629,12 @@ def add_film(request):
                 messages.error(request, 'Film does not exist')
     return render(request, 'uweflix/add_film.html', context)
 
+# The `edit_film` function is responsible for editing a film object in the database based on the form 
+# data submitted via a POST request. The function creates an `EditFilmForm` object to display the form, 
+# and if a POST request is received, the function validates the data and updates the film object in 
+# the database. If the film object exists in the database, the data is updated and the form is 
+# populated with the updated film data, otherwise an error message is printed. Finally, the function 
+# renders the `add_film.html` template with the context containing the form data.
 def edit_film(request):
     form = EditFilmForm()
     context = {"form": form}
@@ -542,6 +669,14 @@ def edit_film(request):
     context["form"] = form
     return render(request, "uweflix/add_film.html", context)
 
+# This is a Django REST Framework API view function that handles HTTP GET and POST requests for 
+# screens. If the request method is GET, it retrieves all screens from the database, serializes 
+# the data using the ScreenSerializer and returns a Response object containing the serialized data with 
+# a 200 OK status code. If the request method is POST, it creates a new screen object using the data 
+# in the request, validates the data using the ScreenSerializer, saves the new object to the database 
+# and returns a Response object containing the serialized data with a 201 CREATED status code if the data
+# is valid. If the data is invalid, it returns a Response object containing the validation errors with a
+# 400 BAD REQUEST status code.
 @api_view(['GET','POST'])
 def screens_endpoint(request):
     if request.method == 'GET':
@@ -554,7 +689,14 @@ def screens_endpoint(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+# The given code defines an API endpoint for a specific screen identified by its primary key. 
+# It supports GET, PUT, and DELETE requests. 
+# The GET request returns the details of the screen in JSON format. 
+# The PUT request updates the existing screen details with the provided data and returns the updated data. 
+# The DELETE request deletes the screen and returns a success message. 
+# If the screen is not found, it returns a 404 NOT FOUND response. If there are any validation 
+# errors in the data provided for PUT request, it returns a 400 BAD REQUEST response.
 @api_view(['GET', 'PUT', 'DELETE']) 
 def specific_screen_endpoint(request, pk): 
     try: 
@@ -574,6 +716,12 @@ def specific_screen_endpoint(request, pk):
         screen.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# This is a view function for adding a new screen and editing existing screens. It renders a form to 
+# add a new screen and lists all the existing screens with options to edit them. If the user 
+# submits the add screen form, it validates the data, creates a new screen object, and saves 
+# it to the database. If the user submits the edit screen form, it validates the data, retrieves 
+# the selected screen object from the database, updates its data, and saves it. Overall, the function 
+# handles GET and POST requests and renders the 'add_screen.html' template with the relevant context data.
 def add_screen(request):
     context = {}
     form = addScreenForm()
@@ -614,6 +762,13 @@ def add_screen(request):
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
 
+# This is a Django REST Framework API view function that handles GET and POST requests for the 'showings' 
+# endpoint. If a GET request is received, all 'Showing' objects are retrieved from the database and 
+# serialized using the 'ShowingSerializer', then returned with a 200 status code. If a POST request
+# is received, the data from the request is deserialized using the 'ShowingSerializer' and if the data 
+# is valid, a new 'Showing' object is created and saved to the database, and the serialized data for 
+# the new object is returned with a 201 status code. If the data is invalid, a 400 status code is 
+# returned along with the validation errors.
 @api_view(['GET','POST']) # @here see if this works with relations
 def showings_endpoint(request):
     if request.method == 'GET':
@@ -627,6 +782,18 @@ def showings_endpoint(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# This is a view function named `add_showing` that adds a new showing to the database. The function takes
+# a request object as its parameter, initializes an empty context dictionary and an `addShowingForm` 
+# instance, and gets all existing showings from the database along with their IDs. If there are any 
+# showings, their IDs are added to the context dictionary.
+
+# If the request method is POST, the function populates the form with the data submitted via the 
+# form and, if the form is valid, it creates a new showing object and saves it to the database 
+# using the `newShowing` method of the `Showing` model. The `newShowing` method takes the screen, 
+# film, and time parameters as its arguments and creates a new showing with these parameters.
+
+# Finally, the function populates the context dictionary with the `addShowingForm` instance and renders 
+# the `add_showing.html` template with the context.
 def add_showing(request):
     context = {}
     form = addShowingForm
@@ -645,6 +812,13 @@ def add_showing(request):
     context['form'] = form
     return render(request, 'uweflix/add_showing.html', context)
 
+# This is a view function for editing an existing showing. It receives a request and a showing_id as 
+# input parameters. It creates an instance of the editShowingForm and sets up the context dictionary 
+# with this form. The function then tries to retrieve the showing instance based on the provided 
+# showing_id, and if it does not exist, returns a 404 error. If the 'edit_showing' button is clicked, 
+# the function attempts to update the showing with the information provided in the form. If the form is 
+# valid, it saves the changes and displays a success message. If the form is not valid, it displays an 
+# error message. Finally, it returns the render of the edit_showing.html template with the updated context.
 def edit_showing(request, showing_id):
     form = editShowingForm()
     context = {"form":form}
@@ -672,6 +846,13 @@ def edit_showing(request, showing_id):
     context['form'] = form
     return render(request, 'uweflix/edit_showing.html', context)
 
+# This function handles the registration process for a new user. It first creates instances of the 
+# `CustomUserCreationForm` and `RegisterStudentForm` forms, and then renders the `register.html` 
+# template with these forms as context. If the request method is `POST`, it checks if both forms are 
+# valid. If they are, it creates a new user with the information entered in the `CustomUserCreationForm`, 
+# sets the user's `is_active` attribute to `False`, and saves the user. It then creates a new `Customer` 
+# instance with the user and the date of birth entered in the `RegisterStudentForm`, adds the user to the
+# `Student` group, and renders the `register.html` template with a confirmation message.
 def registerPage(request):
     form = CustomUserCreationForm()
     customer_form = RegisterStudentForm()
