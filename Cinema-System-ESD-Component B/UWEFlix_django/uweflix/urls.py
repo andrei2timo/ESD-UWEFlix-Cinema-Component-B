@@ -3,6 +3,10 @@ from uweflix import views
 from uweflix.models import *
 from .views import *
 
+# The urlpatterns variable in this urls.py file lists all the available URL paths for the Django web 
+# application. Each path is associated with a specific view function that handles the incoming request
+# and produces a response. The path function is imported from django.urls and is used to define a 
+# URL route along with its corresponding view function.
 
 urlpatterns = [
     path("club_discount/", views.clubdiscount, name="club_discount"),

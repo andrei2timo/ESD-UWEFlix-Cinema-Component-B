@@ -916,6 +916,13 @@ def userpage(request):
     context = {}
     return render(request, 'uweflix/user.html', context)
 
+# The `payment` function handles the payment process for movie tickets. It retrieves the showing, adult, 
+# student, and child prices and creates a payment form. If the form is submitted and valid, the function 
+# checks the remaining tickets and the payment option. If the user is signed in as a student, the function 
+# checks whether the payment can be made using credit. If the user is not signed in, the function redirects
+# to the payment page to pay with a credit card. If the payment is successful, it creates a new transaction
+# and generates a new ticket for each ticket purchased, then updates the remaining tickets and redirects 
+# to the thank you page.
 def payment(request, showing):
 
     if 'user_id' in request.session:
@@ -994,6 +1001,11 @@ def payment(request, showing):
             return render(request, 'uweflix/payment.html', context={'form':form, "showing": showing})
     return render(request, 'uweflix/payment.html', context)
 
+# The pay_with_card function is a view function in the UWEFlix web application. It handles the process 
+# of a user making a payment for cinema tickets using a card. It receives the user's input from a 
+# CardPaymentForm, validates it and creates Ticket and Transaction objects to complete the purchase. 
+# It then stores relevant information about the purchase in the user's session and redirects them to a 
+# thank-you page. If the form is not valid, it will render the payment page again with the invalid form.
 def pay_with_card(request):
     form = CardPaymentForm()
     context = {
@@ -1043,6 +1055,13 @@ def pay_with_card(request):
 
     return render(request,"uweflix/pay_with_card.html",context)
 
+# The `rep_payment` function processes a payment for a club representative who is purchasing tickets on
+# behalf of their club. The function retrieves the showing being booked and the representative's discount 
+# rate, and displays the payment form. When the user submits the payment form, the function validates 
+# the form and creates a new transaction for the purchase of student tickets. If the payment is successful, 
+# the function updates the remaining tickets for the showing and redirects to a confirmation page. 
+# If there are not enough tickets remaining to make the booking, or if there is an issue with the 
+# payment, the function returns an error page.
 def rep_payment(request, showing):
     showing = Showing.getShowing(id=showing)
     form = RepPaymentForm()
@@ -1100,15 +1119,29 @@ def rep_payment(request, showing):
             return render(request, 'uweflix/rep_payment.html', context={'form':form, "showing": showing})
     return render(request, 'uweflix/rep_payment.html', context)
 
+# The `thanks` function is a Django view that renders a "thank you" page after a successful purchase. 
+# The function first checks if the 'successful_purchase' key is in the request session; if it's not 
+# found, the function raises an Http404 exception. If the key is found, it is removed from the session, 
+# and the function returns an HTML page rendered by the Django template engine.
 def thanks(request):
     if 'successful_purchase' not in request.session:
         raise Http404("Forbidden access to this page.")
     del request.session['successful_purchase']
     return render(request, "uweflix/thanks.html")
 
+# The `error` function is a view in the `uweflix` Django web application that simply renders the 
+# `uweflix/error.html` template. This template is used to display an error message to the user 
+# in case an error occurs during a transaction or a user tries to access a page that they do 
+# not have permission to access.
 def error(request):
     return render(request, "uweflix/error.html")
 
+# The `topup` function is a Django view that handles the top-up functionality for users' accounts. 
+# The function first checks if the user is logged in and has the appropriate user group ("Club Rep" or 
+# "Student"). If the user is authorized, the function handles the POST request containing the top-up 
+# amount, adds the amount to the user's account credit, and updates the user's session with the new 
+# credit amount. Finally, the function renders the "topup.html" template. If the user is not authorized, 
+# the function redirects the user to the home page.
 def topup(request):
     if 'user_group' in request.session:
         if request.session['user_group'] == "Club Rep":
@@ -1127,9 +1160,17 @@ def topup(request):
     else:
         return redirect('home')
 
+# The `view_accounts` function renders the `view_accounts.html` template, which displays a list of 
+# user accounts. This function does not perform any action on the user accounts; it is only 
+# responsible for displaying them.
 def view_accounts(request):
     return render(request, "uweflix/view_accounts.html")
 
+# The `daily_transactions` function takes a `request` object and returns a rendered HTML page that 
+# displays a list of transactions made on a given day. It displays a form that allows the user 
+# to select a date to view transactions for, and upon submitting the form, retrieves and displays
+# the transactions for the selected date. If no transactions were made on the selected date, 
+# it displays a message indicating so.
 def daily_transactions(request):
     form = DatePickerForm()
     titleText = "Please select a day to view transactions for:"
@@ -1161,6 +1202,12 @@ def daily_transactions(request):
     else:
         return render(request, "uweflix/daily_transactions.html", context)
 
+# The `customer_statements` function renders a page for generating customer statements based on a 
+# selected club representative and time range. The function creates a form object, and if a valid 
+# POST request is received, it validates the form data and uses it to retrieve a list of transactions 
+# for the selected club representative and time range. The function then adds the club representative's 
+# club name and transaction list to the context and renders the `customer_statements.html` template with 
+# the context. If the request is not a POST request, the function simply renders the template with the form.
 def customer_statements(request):
     form = SearchClubRepForm()
     context = {'form': form}
@@ -1194,6 +1241,12 @@ def customer_statements(request):
     else:
         return render(request, 'uweflix/customer_statements.html', context)
 
+# The `settle_payments` function appears to handle the process of settling payments for a specific Club Rep. 
+# It first checks if the logged-in user belongs to the Club Rep user group, and then retrieves all 
+# transactions made by the Club Rep that have not been settled for the current month. If the request 
+# method is POST, it sets the `is_settled` field of all transactions to True and redirects back to 
+# the `settle_payments` view. Finally, it renders the `settle_payments.html` template with the 
+# transaction list and Club Rep number as context.
 def settle_payments(request):
     context = {}
     if request.session["user_group"] == "Club Rep":
@@ -1218,6 +1271,11 @@ def settle_payments(request):
     else:
         return redirect('home')
 
+# The `set_payment_details` function is used to set the payment details for a club. It takes a POST 
+# request containing a form with information about the club's payment details such as card number 
+# and expiration date. If the form is valid, it updates the club object with the new payment details 
+# and displays a success message. If the form is invalid, it re-renders the form with error messages. 
+# Finally, it renders the "set_payment.html" template with the form and any messages.
 def set_payment_details(request):
     form = AccessClubForm()
     context = {'form': form}
@@ -1248,6 +1306,13 @@ def set_payment_details(request):
             context = {'form': form}
     return render(request, "uweflix/set_payment.html", context)
 
+# This is a Django REST Framework view function that supports both GET and POST requests to the 
+# "/clubs_endpoint" endpoint. When a GET request is received, it retrieves all club objects from 
+# the database, serializes them using the ClubSerializer, and returns the serialized data in a 
+# Response object with a status code of 200. When a POST request is received, it deserializes the 
+# request data using the ClubSerializer, validates the data, saves it to the database, and returns 
+# the serialized data in a Response object with a status code of 201 if successful. If there are 
+# validation errors, it returns a Response object with the errors and a status code of 400.
 @api_view(['GET','POST'])
 def clubs_endpoint(request):
     if request.method == 'GET':
@@ -1260,7 +1325,13 @@ def clubs_endpoint(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+# This is a Django Rest Framework view function decorated with `@api_view` that accepts GET, PUT, 
+# and DELETE requests to interact with a specific Club instance identified by its primary key (pk). 
+# If the Club with the given pk does not exist, it returns a 404 response. If the request method 
+# is GET, it returns a serialized representation of the Club instance. If the request method is PUT,
+# it updates the Club instance with the provided data and returns the updated serialized representation.
+# If the request method is DELETE, it deletes the Club instance and returns a 204 response.
 @api_view(['GET', 'PUT', 'DELETE']) 
 def specific_club_endpoint(request, pk): 
     try: 
@@ -1280,6 +1351,11 @@ def specific_club_endpoint(request, pk):
         club.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# This function handles the addition of a new club. It initializes an empty context dictionary and 
+# an instance of the addClubForm. If the request method is POST, it validates the submitted form, 
+# creates a new Club instance with the submitted data, saves it, and displays a success message. 
+# It then redirects the user to the cinema manager home page. The rendered template is 
+# "Uweflix/add_club.html".
 def add_club(request):
     context = {}
     form = addClubForm()
@@ -1302,6 +1378,10 @@ def add_club(request):
     context['form'] = form
     return render(request, "Uweflix/add_club.html", context)
 
+# This function adds a new club representative to the system. It takes in two forms, `ClubRepCreationForm` 
+# and `addRepForm`, and validates them. If both forms are valid, it saves the user object and creates 
+# a new `ClubRep` object. It assigns a unique username to the user and adds the user to the 
+# "Club Rep" group. It then redirects the user to a success page.
 def add_rep(request):
     context = {}
     userForm = ClubRepCreationForm()
@@ -1331,12 +1411,23 @@ def add_rep(request):
     context['userform'] = userForm
     return render(request, "uweflix/add_rep.html", context)
 
+# The function `rep_success` renders a success page after a Club Representative is successfully created. 
+# It checks whether the `successful_creation` flag is set in the session data, and raises a 404 error 
+# if it is not. If the flag is set, it deletes the flag from the session data and renders the success page.
 def rep_success(request):
     if 'successful_creation' not in request.session:
         raise Http404("Forbidden access to this page.")
     del request.session['successful_creation']
     return render(request, "uweflix/rep_success.html")
 
+# This is a Django view function called `review_students` that takes a `userID` parameter in the URL. 
+# It displays a list of students who have registered on the website and are awaiting review. The function 
+# sets a default student to be reviewed if none is specified in the URL. The user can change the student 
+# to review by selecting a different one from the list. If the user clicks accept or deny, the function 
+# updates the database accordingly and redirects back to the default student. If the form is being 
+# submitted via POST, the function updates the database based on the button clicked and redirects 
+# back to the default student. The function renders the template `UweFlix/review_students.html` with 
+# the `context` dictionary containing the list of students, the chosen student, and the URL ID.
 def review_students(request, userID):
     print(userID)
     students = User.objects.filter(is_active=False)
@@ -1366,7 +1457,12 @@ def review_students(request, userID):
             return redirect('review_students', userID=0)
     return render(request, "UweFlix/review_students.html", context)
 
-
+# The `view_order_history` function allows a Club Rep or a Student to view their order history within a 
+# selected date range. The function first renders a DateIntervalForm and prompts the user to select a 
+# date range to view their transactions. Once submitted, the function retrieves the user's transaction
+# history and returns it to the user. If there are no transactions made during the specified date 
+# range, the function returns a message indicating that no transactions were made during that period. 
+# If the user is not authenticated, they are redirected to the login page.
 def view_order_history(request):
     form = DateIntervalForm()
     titleText = "Please select a date range to view transactions for:"
@@ -1410,7 +1506,13 @@ def view_order_history(request):
     else:
         return render(request, "UweFlix/view_order_history.html", context)
 
-
+# The `change_ticket_prices` function takes in a `request` object and returns an HTTP response with a rendered
+# template. The function initializes a `ChangePriceForm` instance and a `context` dictionary containing the 
+# form. If the HTTP request method is "POST," the function attempts to validate the form data. If the form 
+# is valid, the function calls the `changePrices` function of the `Prices` class with the cleaned data values
+# for adult, student, and child ticket prices. The function then updates the `context` dictionary with a 
+# confirmation message containing the new ticket prices and renders the template with the updated `context` 
+# dictionary.
 def change_ticket_prices(request):
     form = ChangePriceForm()
     context = {
@@ -1424,6 +1526,12 @@ def change_ticket_prices(request):
             context['confirm'] = f"Prices confirmed. New ticket prices: \nAdult = £{adult}\nStudent = £{student}\nChild = £{child}"
     return render(request, "uweflix/change_ticket_prices.html", context)
 
+# The `request_cancellation` function is used to handle user requests for ticket cancellations. It retrieves 
+# the user's transaction history from the database and filters out any transactions that have already been 
+# requested for cancellation. It then groups the tickets by showing time, ticket type, and transaction 
+# number, and passes them to the template for display. If the user submits a request for cancellation, 
+# the function updates the transaction status in the database and redirects the user back to the 
+# cancellation request page.
 def request_cancellation(request):
     now = timezone.now()
     user = None
@@ -1457,6 +1565,17 @@ def request_cancellation(request):
         return redirect('request_cancellation') 
     return render(request, "uweflix/request_cancellation.html", context)
 
+# The `approve_cancellation` function is a view in a Django web application that handles the approval of 
+# ticket cancellations requested by customers. It first retrieves a list of transactions that have been 
+# requested for cancellation, then checks if the tickets are still valid for cancellation (i.e., 
+# the showing time has not passed). The view then renders a template with a list of tickets that can 
+# be approved for cancellation. 
+
+# If the user approves a cancellation request, the function retrieves the corresponding transaction and 
+# calculates the total cost of the transaction. If the transaction has already been settled, the customer 
+# is refunded the transaction cost, which is added to their credit. The function then updates the 
+# remaining tickets for the corresponding showing and deletes the transaction from the database. 
+# The view then redirects to the approve_cancellation page.
 def approve_cancellation(request):
     now = timezone.now()
     user = None
