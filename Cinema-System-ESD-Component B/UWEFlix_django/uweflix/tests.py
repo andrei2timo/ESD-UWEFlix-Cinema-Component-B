@@ -119,3 +119,41 @@ class TicketModelTestCase(TestCase):
     def test_ticket_str(self):
         ticket = Ticket.objects.get(seat_number=1)
         self.assertEqual(str(ticket), "Test Film - 2023-05-01 14:00:00 - Seat 1")
+
+class TransactionModelTestCase(TestCase):
+    def setUp(self):
+        customer = Customer.objects.create(name="Test Customer", email="testcustomer@test.com")
+        transaction = Transaction.objects.create(customer=customer, total_amount=100)
+        film = Film.objects.create(title="Test Film", age_rating=18, duration=120, trailer_desc="Test Trailer", image="test.png")
+        screen = Screen.objects.create(name="Test Screen", capacity=100, apply_covid_restrictions=True)
+        showing = Showing.objects.create(film=film, screen=screen, start_time="2023-04-26 18:00:00", end_time="2023-04-26 20:00:00")
+        ticket = Ticket.objects.create(showing=showing, seat_number="A1", price=10, status="AVAILABLE")
+        transaction.tickets.add(ticket)
+
+    def test_transaction_str(self):
+        transaction = Transaction.objects.first()
+        self.assertEqual(str(transaction), f"Transaction #{transaction.id} ({transaction.customer.name}): {transaction.total_amount} USD")
+
+    def test_transaction_tickets(self):
+        transaction = Transaction.objects.first()
+        self.assertEqual(transaction.tickets.count(), 1)
+        self.assertEqual(transaction.tickets.first().showing.film.title, "Test Film")
+        self.assertEqual(transaction.tickets.first().price, 10)
+
+    def test_transaction_total_amount(self):
+        transaction = Transaction.objects.first()
+        self.assertEqual(transaction.total_amount, 10)
+
+    def test_ticket_str(self):
+        ticket = Ticket.objects.first()
+        self.assertEqual(str(ticket), f"Ticket #{ticket.id} ({ticket.showing.film.title} - {ticket.showing.start_time.strftime('%Y-%m-%d %H:%M:%S')})")
+
+    def test_ticket_book(self):
+        ticket = Ticket.objects.first()
+        ticket.book()
+        self.assertEqual(ticket.status, "BOOKED")
+
+    def test_ticket_cancel(self):
+        ticket = Ticket.objects.first()
+        ticket.cancel()
+        self.assertEqual(ticket.status, "AVAILABLE")

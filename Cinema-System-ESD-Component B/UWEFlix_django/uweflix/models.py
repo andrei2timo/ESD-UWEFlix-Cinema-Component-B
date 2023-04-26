@@ -14,11 +14,35 @@ from django.forms import ValidationError
 class User(AbstractUser):
     pass
 
+# The `Customer` model represents a user account for a student in a system. It inherits from the `models.Model` 
+# class and has three fields: `user` which is a `OneToOneField` that relates the customer to a user 
+# account, `dob` which represents the date of birth of the customer, and `credit` which is a 
+# `FloatField` that represents the amount of credit the customer has. The `dob` field has a 
+# custom label of "Date of birth". The `credit` field has a default value of 0.00.
 class Customer(models.Model):  # Student accounts
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     dob = models.DateField('Date of birth')
     credit = models.FloatField(default=0.00)
 
+# The class Transaction models a database for storing transactions that are to be analyzed by an Account 
+# Manager. It has fields for the customer responsible for the transaction, the date of the transaction, 
+# the cost of the transaction, whether the transaction has been paid, and whether the transaction is 
+# requested to be canceled.
+    # newTransaction(cust, cost, is_paid): This method creates a new transaction object with the provided 
+    # customer, cost, and paid status, and returns the newly created transaction object. If the creation 
+    # fails, it prints an error message.
+
+    # getTransaction(id): This method retrieves the transaction object with the provided transaction ID, 
+    # and returns the transaction object. If the transaction does not exist, it prints an error message.
+
+    # updateTransaction(id, *transaction_data): This method updates the transaction object with the provided 
+    # transaction ID with the provided transaction data. The transaction data can be a Customer object, 
+    # a datetime.date object, a float, or a bool, and is determined by the data type of the input. 
+    # It returns the updated transaction object. If the update fails or if the data item does not 
+    # conform to any of the required input types, it prints an error message.
+
+    # deleteTransaction(id): This method deletes the transaction object with the provided transaction ID. 
+    # If the transaction does not exist or has an issue being deleted, it prints an error message.
 class Transaction(models.Model):  # Database for storing all of the 'accounts' to be analysed by Account Manager
     customer = models.ForeignKey(Customer, blank=True, null=True, default=None, on_delete=models.SET_DEFAULT)  # User responsible for the transaction
     date = models.DateField()  # Date of transaction
@@ -64,6 +88,24 @@ class Transaction(models.Model):  # Database for storing all of the 'accounts' t
         except:
             print("This transaction does not exist, or had an issue being deleted.")
 
+# The `Film` class is a model for storing information about films in a cinema. It has fields for the film's 
+# `title`, `age_rating`, `duration`, `trailer_desc`, and `image`. It also has methods for creating, reading,
+# updating and deleting films.
+
+    # - `newFilm(title, age_rating, duration, trailer_desc)`: creates a new film with the given attributes and 
+    # returns it, or prints an error message if the creation fails.
+
+    # - `getFilm(id)`: retrieves and returns the film with the given ID, or prints an error message if the 
+    # film could not be found.
+
+    # - `removeFilm(id)`: deletes the film with the given ID if it exists and has no associated showings, 
+    # or prints an error message if the film could not be deleted or has showings.
+
+    # - `updateFilm(id, fieldToEdit)`: updates the fields of the film with the given ID based on the values 
+    # in the `fieldToEdit` dictionary. If the update is successful, returns the updated film, 
+    # or prints an error message if it fails.
+
+    # - `__str__(self)`: returns the title of the film as a string.
 class Film(models.Model):
     title = models.CharField(max_length=100)
     age_rating = models.CharField(max_length=3)
@@ -118,7 +160,21 @@ class Film(models.Model):
     def __str__(self):
         return self.title
 
+# The `Screen` class represents a movie theater screen and has two attributes: `capacity` which is an integer 
+# that represents the number of seats in the screen and `apply_covid_restrictions` which is a boolean that 
+# indicates if there are any COVID-19 related restrictions applied to the screen. 
 
+# The class provides four methods:
+
+    # - `newScreen(seats, covidRestrictions)` is a create method that creates a new `Screen` object with the 
+    # given parameters `seats` and `covidRestrictions`.
+
+    # - `getScreen(id)` is a read method that retrieves a `Screen` object based on the given `id`.
+
+    # - `updateScreen(id, fieldToEdit)` is an update method that updates the `Screen` object with the 
+    # given `id` based on the value in `fieldToEdit`.
+
+    # - `removeScreen(id)` is a delete method that removes a `Screen` object based on the given `id`.
 class Screen(models.Model):
     capacity = models.IntegerField()
     apply_covid_restrictions =  models.BooleanField(null=True)
@@ -161,6 +217,19 @@ class Screen(models.Model):
         except:
             print("Screen cannot be found, perhaps you have entered an incorrect id?")
 
+# The `Showing` class represents a movie showing, with information on the screen, the movie being shown, 
+# the time of the showing, and the number of remaining tickets. 
+
+    # - The `newShowing` method creates a new showing object with the given parameters and assigns the 
+    # capacity of the screen to the `remaining_tickets` field. 
+    # If the screen has Covid restrictions applied, the `remaining_tickets` field is divided by 2. 
+    
+    # - The `getShowing` method retrieves a showing object by its ID. 
+    
+    # - The `filmShowing` method updates a showing object's `screen`, `film`, `time`, `remaining_tickets` 
+    # and `apply_covid_restrictions` fields with the given parameters. 
+    
+    # Finally, the `deleteShowing` method deletes a showing object from the database by its ID.
 class Showing(models.Model):
     screen = models.ForeignKey(Screen, default=1, on_delete=models.CASCADE)
     film = models.ForeignKey(Film,on_delete=models.CASCADE)
@@ -211,7 +280,16 @@ class Showing(models.Model):
         except:
             print("This film Showing has Successfully been deleted.")
 
+# The `Ticket` class is a model class that represents an individual ticket booking. It has fields for a 
+# `transaction` foreign key, a `showing` foreign key, and a `ticket_type`. 
 
+    # - The `newTicket` method creates a new ticket object with the given transaction, showing, and ticket 
+    # type parameters. The `getTicket` method retrieves the ticket object with the given ID. 
+
+    # - The `updateTicket` method updates the fields of the ticket object with the given ID based on the 
+    # fieldToEdit parameter. 
+    
+    # - Finally, the `removeTicket` method deletes the ticket object with the given ID.
 class Ticket(models.Model):  # Individual ticket booking database
     transaction = models.ForeignKey(Transaction, default=1, on_delete=models.SET_DEFAULT)
     showing = models.ForeignKey(Showing, default=1, on_delete=models.SET_DEFAULT)  # Screen the booking is being viewed at
@@ -251,7 +329,17 @@ class Ticket(models.Model):  # Individual ticket booking database
         except:
             print("Ticket cannot be found, perhaps you have entered an invalid id?")
 
+# The Club class represents a database table that stores information about a club. It has fields for the club 
+# name, address details, contact details, and payment details. The class has methods for creating a 
+# new club record in the database, retrieving an existing club record from the database, updating 
+# a club record in the database, and deleting a club record from the database.
 
+    # - The newClub method creates a new club record in the database;
+    
+    # - The getClub method retrieves an existing club record from the database based on an ID;
+    
+    # - The updateClub method updates an existing club record in the database based on an ID and the club data 
+    #   to be updated, and the removeClub method deletes an existing club record from the database based on an ID.
 class Club(models.Model):
     name = models.CharField(max_length=100)
     #Address details
@@ -323,6 +411,14 @@ class ClubRep(Customer):
     #- Unique CR number = username (inherited from User model), ensure that username is numbers only
     #- Unique CR password = password (inherited from User model)
 
+# The `Prices` class represents the pricing information for different types of customers 
+# (adult, student, and child). It has three attributes `adult`, `student`, and `child`, each 
+# representing the price for that customer type. It also has two methods: 
+
+    # - `changePrices` and `getCurrentPrices`. 
+    # `changePrices` takes in new prices for each customer type and creates a new `Prices` object with those 
+    # prices. `getCurrentPrices` retrieves the most recent `Prices` object and returns the prices for each 
+    # customer type.
 class Prices(models.Model):
     adult = models.FloatField(default=5.0)
     student = models.FloatField(default=4.0)
@@ -334,9 +430,11 @@ class Prices(models.Model):
     def getCurrentPrices():
         currentPrices = Prices.objects.last()
         return currentPrices.adult, currentPrices.student, currentPrices.child
-    
-    
-  
+
+# The `Account` class is a model for user accounts in a system, with fields for a random number generator, 
+# first initial, last name, associated club, card number, and expiration date. It has a `__str__` 
+# method to return the full name of the account holder. The `save` method is overridden to set a random 
+# number generator for the account if one is not already assigned before saving the account object.
 class Account(models.Model):
     random_num_generator = models.IntegerField(blank=True, null=True)
     first_initial = models.CharField(max_length=1, default='')
