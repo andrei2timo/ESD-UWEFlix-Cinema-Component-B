@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+# `settings.py` is a configuration file in a Django project that contains various settings, such as 
+# database settings, installed apps, middleware, time zone, and many others. It also provides a quick 
+# start development settings that are not suitable for production. This file is generated when starting 
+# a new Django project and can be modified as per project requirements.
 from pathlib import Path
 import os
 

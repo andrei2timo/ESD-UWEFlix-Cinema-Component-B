@@ -13,7 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+# The `urlpatterns` list in this Django project's `urls.py` file routes URLs to views. The first path 
+# maps the root URL to `uweflix.urls`, which handles routing for the application. The second path maps 
+# `/admin` to the Django admin site. The `staticfiles_urlpatterns()` function is used to serve static 
+# files, while `static()` is used to serve media files (like user-uploaded images) in development.
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

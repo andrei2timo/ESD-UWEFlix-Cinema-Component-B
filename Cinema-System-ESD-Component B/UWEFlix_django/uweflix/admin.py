@@ -31,6 +31,15 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username',)
     ordering = ('username',)
 
+# This is the admin.py file for the UWEFlix app. The file imports the necessary modules and models and 
+# registers them with the Django admin site. 
+# The CustomUserAdmin class is defined to customize the display and editing of the User model in the 
+# admin interface. It extends the built-in UserAdmin class and specifies customizations such as the form 
+# used for adding and changing users, the fields displayed in the list view, the fields displayed in the 
+# detail view, and the search and ordering options. 
+# The admin.site.register() method is called for each of the models to be registered with the admin site, 
+# passing in the model class and the custom admin class (if applicable) as arguments. This enables the models 
+# to be viewed and edited in the Django admin interface.
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Film)
 admin.site.register(Customer)
