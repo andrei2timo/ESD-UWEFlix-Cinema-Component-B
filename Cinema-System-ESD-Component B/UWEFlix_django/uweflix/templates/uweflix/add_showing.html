@@ -1,67 +1,150 @@
 {% extends "uweflix/layout.html" %}
 {% load static %}
 {% block title %}
-    Add a showing
+Add a showing
 {% endblock %}
 {% block content %}
 <h1>Add Showing</h1>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
- 
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
 
 <script>
-    jQuery(function($) {
+    jQuery(function ($) {
         $("#id_time").datetimepicker({
-        changeMonth: true,
-        changeYear: true});
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy-mm-dd",
+            timeFormat: "HH:mm"
+        });
+    });
+    // Reset the form if page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        form.reset();
     });
 
-    function updateShowingLink() {
-    console.log('updateShowingLink() called');
-    var selectedValue = $("#selected-showing").val();
-    if (selectedValue !== 'no-results') 
-	{   
-		selectedValue = Math.floor(Math.random()*40);
-        console.log('Selected value: ', selectedValue);
-        var editShowingLink = $('#edit-showing-link');
-        var href = "{% url 'edit_showing' showing_id=1 %}".replace('1', selectedValue);
-        editShowingLink.attr('href', href);
-        $('#show-id-field').val(selectedValue);
-        console.log('Href: ', href);
-    } else {
-        console.log('No option selected');
-        $('#edit-showing-link').removeAttr('href');
-        $('#show-id-field').val('');
-    }
-}
+
+    // Main script for handling form submission, showing selection, editing, and deletion
+    $(document).ready(function () {
+        // Update the selected showing and the edit link when the selected showing changes
+        $("#selected-showing").on("change", function () {
+            var selectedValue = $(this).val();
+
+            updateShowingLink(selectedValue);
+        });
+        // Handle the delete button click
+        $("#delete-showing").on("click", function () {
+            deleteShowing();
+        });
+
+
+        function updateShowingLink(selectedValue) {
+            var selectedShowingElement = $("#selected-showing option:selected");
+            if (selectedValue !== 'no-results') {
+                selectedValue = $("#selected-showing").val();
+                var editShowingLink = $('#edit-showing-link');
+                var href = "{% url 'edit_showing' showing_id=1 %}".replace('1', selectedValue);
+                editShowingLink.attr('href', href);
+                $('#show-id-field').val(selectedValue);
+            } else {
+                $('#edit-showing-link').removeAttr('href');
+                $('#show-id-field').val('');
+            }
+        }
+
+        var deleteShowingUrlTemplate = "{% url 'delete_showing' showing_id=1 %}";
+
+        // Delete selected showing:
+        function deleteShowing() {
+            var selectedShowingElement = document.getElementById("selected-showing");
+            if (selectedShowingElement !== 'no-results') {
+                selectedShowingElement = $("#selected-showing").val();
+                var url = deleteShowingUrlTemplate.replace('1', selectedShowingElement);
+
+                $.post(url, { csrfmiddlewaretoken: "{{ csrf_token }}", showing_id: selectedShowingElement })
+                    .done(function () {
+                        alert("Showing deleted successfully.");
+                        location.reload();
+                    })
+                    .fail(function () {
+                        alert("Error deleting showing.");
+                    });
+            } else {
+                alert("Please select a showing to delete.");
+            }
+        }
+    });
+
+    // Handle the add showing form submission
+    $(document).ready(function () {
+        $('#add-showing-form').on('submit', function (event) {
+            event.preventDefault();
+            submitForm();
+        });
+
+        function submitForm() {
+            const formData = new FormData($('#add-showing-form')[0]);
+
+            $.ajax({
+                url: "{% url 'add_showing' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#add-showing-form')[0].reset();
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error: An error occurred while processing the form.");
+                }
+            });
+        }
+    });
 
 </script>
 
-<form method="post" class="form-area" autocomplete="off">
+<form id="add-showing-form" method="post" class="form-area" autocomplete="off">
     <hr>
     {% csrf_token %}
     <div class="form-group">
         {{ form.as_p}}
     </div>
-    <br/>
-    <br/>
-    <hr>
+
+
     <div class="form-group">
+        <br />
         <button id="confirm-btn" type="submit" class="btn btn-warning">Add Showing</button>
-        <label for="selected_showing">Select Showing:</label>
-        <select id="selected-showing" name="selected_showing" onchange="updateShowingLink()">
-			<option value="no-results">Select a showing</option>
-				{% for option in options %}
-					<option value="{{ option.id }}">{{ option }}</option>
-				{% endfor %}
-		</select>
-		<a href="#" class="btn btn-warning" id="edit-showing-link">Edit Showing</a>
-		<input type="hidden" name="showing_id" id="showing-id-field">
+        <br />
+        <br />
+        <br />
+        <hr>
+        <label for="selected_showing">Edit or Delete a showing: </label>
+        <select id="selected-showing">
+            <option value="">Select a showing</option>
+            {% for showing in showings %}
+            <option value="{{ showing.id }}">{{ showing.film }} {{ showing.time }}</option>
+            {% endfor %}
+        </select>
+
+
+        <a href="#" class="btn btn-warning" id="edit-showing-link">Edit Showing</a>
+        <button type="button" class="btn btn-danger" id="delete-showing">Delete Showing</button>
+        <input type="hidden" name="showing_id" id="showing-id-field">
     </div>
+
 </form>
 
 {% endblock %}

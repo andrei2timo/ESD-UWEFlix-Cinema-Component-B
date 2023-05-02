@@ -7,7 +7,7 @@ from django.contrib.auth.models import *
 from datetime import datetime as dt
 import datetime
 import random
-
+from django.utils import timezone
 
 from django.forms import ValidationError
 
@@ -279,6 +279,10 @@ class Showing(models.Model):
             showing.delete()
         except:
             print("This film Showing has Successfully been deleted.")
+            
+    def __str__(self):
+        formatted_time = self.time.strftime("%Y-%m-%d %H:%M:%S")
+        return f"{self.film.title} - {formatted_time}"
 
 # The `Ticket` class is a model class that represents an individual ticket booking. It has fields for a 
 # `transaction` foreign key, a `showing` foreign key, and a `ticket_type`. 
