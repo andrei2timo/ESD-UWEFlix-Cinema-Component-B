@@ -7,7 +7,7 @@ from django.contrib.auth.models import *
 from datetime import datetime as dt
 import datetime
 import random
-
+import uuid
 
 from django.forms import ValidationError
 
@@ -20,6 +20,7 @@ class User(AbstractUser):
 # `FloatField` that represents the amount of credit the customer has. The `dob` field has a 
 # custom label of "Date of birth". The `credit` field has a default value of 0.00.
 class Customer(models.Model):  # Student accounts
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     dob = models.DateField('Date of birth')
     credit = models.FloatField(default=0.00)
@@ -44,6 +45,7 @@ class Customer(models.Model):  # Student accounts
     # deleteTransaction(id): This method deletes the transaction object with the provided transaction ID. 
     # If the transaction does not exist or has an issue being deleted, it prints an error message.
 class Transaction(models.Model):  # Database for storing all of the 'accounts' to be analysed by Account Manager
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     customer = models.ForeignKey(Customer, blank=True, null=True, default=None, on_delete=models.SET_DEFAULT)  # User responsible for the transaction
     date = models.DateField()  # Date of transaction
     cost = models.FloatField()  # Cost of transaction
@@ -107,6 +109,7 @@ class Transaction(models.Model):  # Database for storing all of the 'accounts' t
 
     # - `__str__(self)`: returns the title of the film as a string.
 class Film(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     title = models.CharField(max_length=100)
     age_rating = models.CharField(max_length=3)
     """Age Ratings:
@@ -176,6 +179,7 @@ class Film(models.Model):
 
     # - `removeScreen(id)` is a delete method that removes a `Screen` object based on the given `id`.
 class Screen(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     capacity = models.IntegerField()
     apply_covid_restrictions =  models.BooleanField(null=True)
 
@@ -231,6 +235,7 @@ class Screen(models.Model):
     
     # Finally, the `deleteShowing` method deletes a showing object from the database by its ID.
 class Showing(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     screen = models.ForeignKey(Screen, default=1, on_delete=models.CASCADE)
     film = models.ForeignKey(Film,on_delete=models.CASCADE)
     time = models.DateTimeField()
@@ -291,6 +296,7 @@ class Showing(models.Model):
     
     # - Finally, the `removeTicket` method deletes the ticket object with the given ID.
 class Ticket(models.Model):  # Individual ticket booking database
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     transaction = models.ForeignKey(Transaction, default=1, on_delete=models.SET_DEFAULT)
     showing = models.ForeignKey(Showing, default=1, on_delete=models.SET_DEFAULT)  # Screen the booking is being viewed at
     ticket_type = models.CharField(max_length=7)
@@ -341,6 +347,7 @@ class Ticket(models.Model):  # Individual ticket booking database
     # - The updateClub method updates an existing club record in the database based on an ID and the club data 
     #   to be updated, and the removeClub method deletes an existing club record from the database based on an ID.
 class Club(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     name = models.CharField(max_length=100)
     #Address details
     street_number = models.IntegerField()
@@ -420,6 +427,7 @@ class ClubRep(Customer):
     # prices. `getCurrentPrices` retrieves the most recent `Prices` object and returns the prices for each 
     # customer type.
 class Prices(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     adult = models.FloatField(default=5.0)
     student = models.FloatField(default=4.0)
     child = models.FloatField(default=3.0)
@@ -436,6 +444,7 @@ class Prices(models.Model):
 # method to return the full name of the account holder. The `save` method is overridden to set a random 
 # number generator for the account if one is not already assigned before saving the account object.
 class Account(models.Model):
+    id = models.CharField(uuid.uuid4(), primary_key=True, max_length=32)
     random_num_generator = models.IntegerField(blank=True, null=True)
     first_initial = models.CharField(max_length=1, default='')
     last_name = models.CharField(max_length=50)
