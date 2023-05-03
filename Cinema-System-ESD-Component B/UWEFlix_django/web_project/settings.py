@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'django.contrib.sites',
+    'rest_framework',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -138,7 +138,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 
-SITE_ID = 2
+SITE_ID = 3
 LOGIN_REDIRECT_URL = 'student_home'
 
 SOCIALACCOUNT_PROVIDERS = {
