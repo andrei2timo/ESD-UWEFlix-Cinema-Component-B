@@ -31,7 +31,7 @@ urlpatterns = [
     path('update_account/<int:myid>/', update_account, name='update_account'),
     path('view_account/', view_account, name='view_account'),
 
-    
+    path("google_register/", views.googleAuthRegister, name="googleAuthRegister"),
     
     
     path("", views.viewings, name="home"),
