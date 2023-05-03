@@ -391,6 +391,49 @@ def update_account(request, myid):  # Manage Accounts
 def view_account(request):
     return render(request, 'uweflix/modify_delete_accounts.html')
     
+    
+    
+    # This function googleAuthRegister handles the registration process for a new user
+#  using Google authentication. If the user is already authenticated, it checks if
+# the user is registered as a customer in the Customer model. If the user is not registered,
+#  it creates a new Customer instance with a default date of birth of '2000-01-01', adds the
+#  user to the Student group, and logs the user in as a customer with a session ID, user group,
+#  and credit information. If the user is already registered, it logs the user in as a customer
+# with the existing session ID, user group, and credit information. In both cases, it redirects
+#  the user to the home page. If the user is not authenticated, it renders the register.html
+#  template for the user to register.
+
+def googleAuthRegister(request):
+    user = request.user
+    if request.user.is_authenticated:
+        if not Customer.objects.filter(user=request.user).exists():
+            student = Customer.objects.create(
+                user=request.user, dob='2000-01-01')
+            group = Group.objects.get(name='Student')
+            group.user_set.add(request.user)
+            messages.success(
+                request, 'You have been registered as a customer.')
+            # Log in the user as a customer
+            request.session['user_id'] = request.user.id
+            request.session['user_group'] = "Student"
+            request.session['credit'] = Customer.objects.get(
+                user=request.user.id).credit
+            request.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request)
+        else:
+            messages.warning(
+                request, 'You are already registered as a customer.')
+            # Log in the user as a customer
+            request.session['user_id'] = request.user.id
+            request.session['user_group'] = "Student"
+            request.session['credit'] = Customer.objects.get(
+                user=request.user.id).credit
+            request.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request)
+        return redirect('home')
+
+    return render(request, 'uweflix/register.html')
+    
 '''
 def registerPage(request):
     form = CustomUserCreationForm()
