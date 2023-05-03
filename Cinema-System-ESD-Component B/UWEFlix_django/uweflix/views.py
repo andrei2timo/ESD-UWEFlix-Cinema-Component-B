@@ -1,3 +1,4 @@
+from django.contrib.auth import logout as auth_logout
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import *
 import calendar
@@ -946,6 +947,7 @@ def login(request):
     return render(request, "uweflix/login.html")
 
 def logout(request):
+    auth_logout(request)
     try:
         del request.session['user_id']
         del request.session['user_group']
@@ -954,6 +956,7 @@ def logout(request):
         pass
     finally:
         return redirect("/login/")
+
 
 def userpage(request):
     context = {}
