@@ -33,6 +33,11 @@ urlpatterns = [
 
     path("google_register/", views.googleAuthRegister, name="googleAuthRegister"),
     
+     path("order_history_account_manager/", views.order_history_account_manager,
+         name="order_history_account_manager"),
+
+    path("view_order_history_account_manager/", views.view_order_history_account_manager,
+         name="view_order_history_account_manager"),
     
     path("", views.viewings, name="home"),
     path("viewings/", views.viewings, name="viewings"),
