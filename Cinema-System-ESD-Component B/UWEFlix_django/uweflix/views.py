@@ -1082,9 +1082,10 @@ def rep_payment(request, showing):
             student_tickets = int(form["rep_student_tickets"].data)
             total_tickets = student_tickets
             payment_option = form.cleaned_data.get("payment_options")
-            if showing.remaining_tickets < total_tickets: #If there is NOT enough tickets
-                print("Not enough tickets remaining to make this booking.")
-                return render(request, "uweflix/error.html")
+            if showing.remaining_tickets < total_tickets:  # If there is NOT enough tickets
+                error_message = "Not enough tickets remaining to make this booking."
+                print(error_message)
+                context['error_message'] = error_message
             else:
                 user_type = request.session['user_group']
                 user = Customer.objects.get(user=request.session['user_id'])
