@@ -861,7 +861,7 @@ def registerPage(request):
         'customer_form': customer_form
     }
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST) # This one is the problem
         customer_form = RegisterStudentForm(request.POST)
         if form.is_valid():
             if customer_form.is_valid():
@@ -874,6 +874,7 @@ def registerPage(request):
                 group.user_set.add(user)
                 context['confirm'] = "Your request has been recieved. Please wait for a Cinema Manager to approve your account."
                 return render(request, 'uweflix/register.html', context)
+        else: print("still a problem")
     return render(request, 'uweflix/register.html', context)
 
 #@unauthenticated_user
