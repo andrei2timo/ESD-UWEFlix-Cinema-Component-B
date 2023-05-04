@@ -1,0 +1,97 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Order History
+{% endblock %}
+{% block content %}
+<style>
+
+    .transaction_list {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .transaction_list th, td {
+	border: 1px solid;
+	text-align: left;
+	padding-right: 15px;
+    }
+
+    .transaction_list th {
+        background-color: lightgrey;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+</style>
+    <center>
+    <h1>Order History</h1>
+    <hr/>
+    {% if transaction_list %}
+        <h3>All transactions between {{ start_date | date:'d/m/Y'}} - {{ end_date | date:'d/m/Y'}}:</h3>
+        <br/>
+        <table class="transaction_list">
+            <thead>
+                <tr>
+                    <th>Transaction #</th>
+                    <th>Date</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Cost</th>
+                    <th>Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transaction_list %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.date | date:'d M Y' }}</td>
+                    <td>{{ transaction.customer.user.first_name }}</td>
+                    <td>{{ transaction.customer.user.last_name }}</td>
+                    <td>£{{ transaction.cost | floatformat:2 }}</td>
+                    <td>{{ transaction.is_settled }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ title_text }}</p>
+    {% endif %}
+    <hr/>
+    <script>
+        $( function() {
+          $( "#id_startDate" ).datepicker({
+              dateFormat: "yy-mm-dd",
+              maxDate: 0,
+              onSelect: function(){
+                $("#id_endDate").datepicker("option","minDate",
+                $("#id_startDate").datepicker("getDate"));
+             }
+          });
+          $( "#id_endDate" ).datepicker({
+            dateFormat: "yy-mm-dd",
+            maxDate: 0,
+            onSelect: function(){
+                $("#id_startDate").datepicker("option","maxDate",
+                $("#id_endDate").datepicker("getDate"));
+             }
+          });
+        } );
+    </script>
+    <form action="{% url 'view_order_history_account_manager' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="form-area">
+        <div class="form-field">
+        Start Date: {{ form.startDate }}
+        <br/>
+        End Date: {{form.endDate}}
+        <br/>
+        </div>
+        <button type="submit" class="btn btn-warning">Search</button>
+        </div>
+        <br/>
+    </form>
+    </center>
+{% endblock %}
