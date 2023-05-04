@@ -18,6 +18,9 @@ from rest_framework.decorators import api_view
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import Http404
+from django.utils import timezone
+from django.http import JsonResponse
 
 
 # This code defines a function named account_modify that renders a HTML template named 
@@ -797,19 +800,29 @@ def showings_endpoint(request):
 def add_showing(request):
     context = {}
     form = addShowingForm
-    showings = Showing.objects.all()
-    options = [showing.id for showing in showings]
-    if showings:
-        context['options'] = options
+    showings = Showing.objects.all().order_by('film__title', 'time')
+    context = {
+        'showings': showings,
+    }
     if request.method == "POST":
         form = addShowingForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
             screen = form.cleaned_data['screen']
             film = form.cleaned_data['film']
             time = form.cleaned_data['time']
-            Showing.newShowing(screen,film,time)
+            existing_showing = Showing.objects.filter(screen=screen, time__date=time.date(), time__time=time.time())
+
+            if existing_showing.exists():
+                return JsonResponse({'success': False, 'message': 'Error: Showing already live at this time on this screen'})
+            else:
+                Showing.newShowing(screen, film, time)
+                return JsonResponse({'success': True, 'message': 'Showing added successfully'})
+    else:
+        messages.error(request, 'Error adding the showing. Please check the form for any mistakes.')
+        form = addShowingForm()
     context['form'] = form
+    context['showings'] = showings
+
     return render(request, 'uweflix/add_showing.html', context)
 
 # This is a view function for editing an existing showing. It receives a request and a showing_id as 
@@ -823,29 +836,37 @@ def edit_showing(request, showing_id):
     form = editShowingForm()
     context = {"form":form}
     showing = get_object_or_404(Showing, id=showing_id)
-    if 'edit_showing' in request.POST:
-        screen = request.POST.get("Screen")
-        film = request.POST.get("Film")
-        time = request.POST.get("Time")
-        try:
-            showing = Film.objects.get(id=showing_id)
-            if time is not None:
-                showing.screen = screen
-                showing.film = film
-                showing.time = time       
-                if form.is_valid():
-                    form.save()
-                showing.save()
-                messages.success(request, 'Showing updated successfully!')
-            else:
-                messages.error(request, 'Invalid time')
-        except Showing.DoesNotExist:
-                messages.error(request, "Showing doesn't exists")
-    #else:
-        #form = editShowingForm(instance=showing)
-    context['form'] = form
+    form = editShowingForm(instance=showing)
+    context = {"form": form}
+
+    if request.method == "POST":
+        form = editShowingForm(request.POST, instance=showing)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Showing updated successfully!')
+            
+            return redirect('add_showing')
+        else:
+            messages.error(request, 'Error updating the showing. Please check the form for any mistakes.')
+
     return render(request, 'uweflix/edit_showing.html', context)
 
+# This is a view function for deleting an existing showing. It receives a request and a showing_id as 
+# input parameters. The function checks if the request method is 'POST', and if so, it tries to retrieve 
+# the showing instance based on the provided showing_id. If the showing does not exist, it returns a 404 
+# error. The function then deletes the showing instance and displays a success message. Afterward, it 
+# returns the render of the add_showing.html template. If the request method is not 'POST', it redirects 
+# the user to the homepage.
+
+def delete_showing(request, showing_id):
+    if request.method == 'POST':
+        showing = get_object_or_404(Showing, id=showing_id)
+        showing.delete()
+        messages.success(request, 'Showing deleted successfully!')
+        return render(request, 'uweflix/add_showing.html', {})
+    else:
+        return redirect('/')
+    
 # This function handles the registration process for a new user. It first creates instances of the 
 # `CustomUserCreationForm` and `RegisterStudentForm` forms, and then renders the `register.html` 
 # template with these forms as context. If the request method is `POST`, it checks if both forms are 
@@ -1615,4 +1636,3 @@ def approve_cancellation(request):
         Transaction.deleteTransaction(requestedTransaction.id)
         return redirect('approve_cancellations') 
     return render(request, "uweflix/approve_cancellations.html", context)
-
