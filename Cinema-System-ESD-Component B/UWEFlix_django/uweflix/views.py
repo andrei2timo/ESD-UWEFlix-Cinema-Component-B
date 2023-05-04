@@ -21,6 +21,55 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+
+
+#At first, it initializes the DateIntervalForm() to get the start and end date from the user. It then sets up the context dictionary with the form and a title to display on the page.
+#Next, the function checks if the HTTP method is "POST". If it is, it validates the form data and gets the start and end dates from the form. It then filters the Transaction model by the selected date range to get all the transactions made within that period.
+#If there are no transactions within that date range, it sets the titleText variable with a message informing the user that there were no transactions made in that date range. It then updates the context dictionary to include this message and returns the updated context to the template.
+#If there are transactions within that date range, the function updates the context with the start and end dates, the transaction list, and the form. It then returns the updated context to the template.
+
+def order_history_account_manager(request):
+    return render(request, 'uweflix/order_history_account_manager.html')
+
+
+def view_order_history_account_manager(request):
+    form = DateIntervalForm()
+    titleText = "Please select a date range to view transactions for:"
+    context = {
+        'form': form,
+        'title_text': titleText
+    }
+    if request.method == "POST":
+        form = DateIntervalForm(request.POST)
+        if form.is_valid():
+            startDate = form.cleaned_data['startDate']
+            endDate = form.cleaned_data['endDate']
+            transaction_list = Transaction.objects.filter(
+                date__range=(startDate, endDate))
+            if not transaction_list:
+                titleText = f"There were no transactions made in the selected date range"
+                context = {
+                    'form': form,
+                    'title_text': titleText
+                }
+            else:
+                context = {
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'transaction_list': transaction_list,
+                    'form': form
+                }
+            form = DateIntervalForm()
+        return render(request, "UweFlix/order_history_account_manager.html", context)
+    else:
+        return render(request, "UweFlix/order_history_account_manager.html", context)
+
+
+
+
+
+
+
 # This code defines a function named account_modify that renders a HTML template named 
 # 'uweflix/account_modify.html' along with a SelectUserForm instance. The template will
 #  use the form to allow users to select an account to modify. The context dictionary 
