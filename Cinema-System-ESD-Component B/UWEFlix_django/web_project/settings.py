@@ -138,7 +138,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 
-SITE_ID = 3
+SITE_ID = 4
 LOGIN_REDIRECT_URL = 'student_home'
 
 SOCIALACCOUNT_PROVIDERS = {
