@@ -52,6 +52,44 @@ Login
         margin-bottom: 15px;
         border-radius: 5px;
     }    
+    
+      /* The button container */
+    .google-button {
+        display: inline-block;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        color: #555;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+       
+    }
+
+    /* The Google logo */
+    .google-button img {
+        height: 2em;
+        width: 2em;
+        margin-right: 0.5rem;
+    }
+
+    /* On hover */
+    .google-button:hover {
+        border: 1px solid #3367d6;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px #3367d6;
+        color: #3367d6;
+    }
+
+    /* On active */
+    .google-button:active {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+        color: #555;
+    }
 
 </style>
 
@@ -71,6 +109,27 @@ Login
         <label for="password">Password:</label><br>
         <input type = "password", name = "password", class="inputFields", placeholder="Enter Password"><br>
         <input type="submit" value="Login", class="submitButton">
+        <h1></h1>
+        {% load socialaccount %}
+
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.email }}</p>
+            <p>Welcome, {{ user }}</p>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <a href="{% url 'googleAuthRegister' %}">Register</a>
+        {% else %}
+        <a href="{% provider_login_url 'google' %}?next={% url 'googleAuthRegister' %}" class="google-button">
+            <img src="https://www.google.com/images/icons/gplus-64.png" alt="Google logo">
+            Sign in with Google
+          </a>
+        {% endif %}
     </form>
 </div>
 

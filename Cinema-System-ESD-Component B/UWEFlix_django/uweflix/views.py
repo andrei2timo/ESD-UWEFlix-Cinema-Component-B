@@ -1,3 +1,4 @@
+from django.contrib.auth import logout as auth_logout
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import *
 import calendar
@@ -21,6 +22,55 @@ from rest_framework import status
 from django.http import Http404
 from django.utils import timezone
 from django.http import JsonResponse
+
+
+
+
+#At first, it initializes the DateIntervalForm() to get the start and end date from the user. It then sets up the context dictionary with the form and a title to display on the page.
+#Next, the function checks if the HTTP method is "POST". If it is, it validates the form data and gets the start and end dates from the form. It then filters the Transaction model by the selected date range to get all the transactions made within that period.
+#If there are no transactions within that date range, it sets the titleText variable with a message informing the user that there were no transactions made in that date range. It then updates the context dictionary to include this message and returns the updated context to the template.
+#If there are transactions within that date range, the function updates the context with the start and end dates, the transaction list, and the form. It then returns the updated context to the template.
+
+def order_history_account_manager(request):
+    return render(request, 'uweflix/order_history_account_manager.html')
+
+
+def view_order_history_account_manager(request):
+    form = DateIntervalForm()
+    titleText = "Please select a date range to view transactions for:"
+    context = {
+        'form': form,
+        'title_text': titleText
+    }
+    if request.method == "POST":
+        form = DateIntervalForm(request.POST)
+        if form.is_valid():
+            startDate = form.cleaned_data['startDate']
+            endDate = form.cleaned_data['endDate']
+            transaction_list = Transaction.objects.filter(
+                date__range=(startDate, endDate))
+            if not transaction_list:
+                titleText = f"There were no transactions made in the selected date range"
+                context = {
+                    'form': form,
+                    'title_text': titleText
+                }
+            else:
+                context = {
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'transaction_list': transaction_list,
+                    'form': form
+                }
+            form = DateIntervalForm()
+        return render(request, "UweFlix/order_history_account_manager.html", context)
+    else:
+        return render(request, "UweFlix/order_history_account_manager.html", context)
+
+
+
+
+
 
 
 # This code defines a function named account_modify that renders a HTML template named 
@@ -393,6 +443,49 @@ def update_account(request, myid):  # Manage Accounts
 # which displays the list of accounts and clubs for managing accounts.
 def view_account(request):
     return render(request, 'uweflix/modify_delete_accounts.html')
+    
+    
+    
+    # This function googleAuthRegister handles the registration process for a new user
+#  using Google authentication. If the user is already authenticated, it checks if
+# the user is registered as a customer in the Customer model. If the user is not registered,
+#  it creates a new Customer instance with a default date of birth of '2000-01-01', adds the
+#  user to the Student group, and logs the user in as a customer with a session ID, user group,
+#  and credit information. If the user is already registered, it logs the user in as a customer
+# with the existing session ID, user group, and credit information. In both cases, it redirects
+#  the user to the home page. If the user is not authenticated, it renders the register.html
+#  template for the user to register.
+
+def googleAuthRegister(request):
+    user = request.user
+    if request.user.is_authenticated:
+        if not Customer.objects.filter(user=request.user).exists():
+            student = Customer.objects.create(
+                user=request.user, dob='2000-01-01')
+            group = Group.objects.get(name='Student')
+            group.user_set.add(request.user)
+            messages.success(
+                request, 'You have been registered as a customer.')
+            # Log in the user as a customer
+            request.session['user_id'] = request.user.id
+            request.session['user_group'] = "Student"
+            request.session['credit'] = Customer.objects.get(
+                user=request.user.id).credit
+            request.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request)
+        else:
+            messages.warning(
+                request, 'You are already registered as a customer.')
+            # Log in the user as a customer
+            request.session['user_id'] = request.user.id
+            request.session['user_group'] = "Student"
+            request.session['credit'] = Customer.objects.get(
+                user=request.user.id).credit
+            request.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request)
+        return redirect('home')
+
+    return render(request, 'uweflix/register.html')
     
 '''
 def registerPage(request):
@@ -924,6 +1017,7 @@ def login(request):
     return render(request, "uweflix/login.html")
 
 def logout(request):
+    auth_logout(request)
     try:
         del request.session['user_id']
         del request.session['user_group']
@@ -932,6 +1026,7 @@ def logout(request):
         pass
     finally:
         return redirect("/login/")
+
 
 def userpage(request):
     context = {}
