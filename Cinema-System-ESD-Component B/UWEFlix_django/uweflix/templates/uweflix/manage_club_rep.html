@@ -41,6 +41,14 @@ Account Modify
             <label> dob: </label>
             <input type="date" class="form-control" value="{{sel_rep.dob|date:'Y-m-d'}}" name="dob" placeholder="Enter dob" format="yyyy-mm-dd">
           </div>
+            <div class="form-group">
+            <label for="club">Club:</label>
+            <select class="form-control" id="club" name="club">
+                {% for club in club_list %}
+                <option value="{{ club.id }}" {% if sel_rep.club.id == club.id %}selected{% endif %}>{{ club.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         
         <div class="text-center mt-4">
           <button type="submit" class="btn btn-success">UPDATE</button>
@@ -63,6 +71,15 @@ Account Modify
            <label> Date of Birth: </label>
            <input type="text" class="form-control" name="username" placeholder="Enter Date of Birth:" readonly>
        </div>
+       
+        <div class="form-group">
+        <label for="club">Club:</label>
+        <select class="form-control" id="club" name="club">
+            {% for club in club_list %}
+            <option value="{{ club.id }}" {% if sel_rep.club.id == club.id %}selected{% endif %}  readonly>{{ club.name }} </option>
+            {% endfor %}
+        </select>
+      </div>
 
       
           
