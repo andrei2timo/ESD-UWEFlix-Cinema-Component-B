@@ -6,7 +6,7 @@
     {% for film in films %}
       <li>
         {{ film.title }}
-        <a href="../film_detail/">
+        <a href="../film_detail/{{film.id}}">
           <input type="submit" name="manage_film" value="Manage" class="btn">
         </a>
       </li>
