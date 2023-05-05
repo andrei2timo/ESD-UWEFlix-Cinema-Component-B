@@ -90,9 +90,11 @@ def delete_club_rep(request, myid):  # Manage Accounts
 def edit_club_rep(request, myid):  # Manage Accounts
     sel_rep = ClubRep.objects.get(id=myid)
     rep_list = ClubRep.objects.all()
+    club_list = Club.objects.all()
     context = {
         'sel_rep': sel_rep,
-        'rep_list': rep_list
+        'rep_list': rep_list,
+        'club_list': club_list
     }
     return render(request, 'uweflix/manage_club_rep.html', context)
 
@@ -106,8 +108,8 @@ def update_club_rep(request, myid):
         user_rep.user.last_name = request.POST['user.last_name']
     if 'dob' in request.POST:
         user_rep.dob = request.POST['dob']
-    if 'club' in request.POST:
-        user_rep.club = Club.objects.get(name=request.POST['club'])
+    club_id = request.POST['club']
+    user_rep.club = Club.objects.get(id=club_id)
     if 'club_rep_num' in request.POST:
         user_rep.club_rep_num = request.POST['club_rep_num']
 
@@ -116,6 +118,7 @@ def update_club_rep(request, myid):
 
     messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
     return redirect('manage_club_rep')
+
 
 
 
