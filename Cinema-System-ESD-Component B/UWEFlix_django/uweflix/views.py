@@ -669,7 +669,7 @@ class FilmDetail(APIView):
         if not serializer.is_valid():
             return Response({'serializer': serializer, 'film': film})
         serializer.save()
-        return redirect('films_endpoint')
+        return redirect('add_film')
 
 # This function is responsible for adding a film to the database, deleting a film from the database, 
 # and updating a film in the database. It uses the deleteFilmForm to handle the deletion of a film 
