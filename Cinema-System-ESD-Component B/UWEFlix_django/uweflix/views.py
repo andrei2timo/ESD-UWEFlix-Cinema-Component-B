@@ -10,6 +10,8 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
+from rest_framework.renderers import TemplateHTMLRenderer
+
 
 import re
 import random
@@ -624,6 +626,15 @@ def films_endpoint(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.views import APIView
+
+class FilmList(APIView): # This is a working alternative to the above 'if get' condition
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'uweflix/film_list.html'
+    def get(self, request):
+        queryset = Film.objects.all()
+        return Response({'films': queryset})
 
 # This is a Django Rest Framework API view that handles GET, PUT, and DELETE requests for a specific Film 
 # object identified by its primary key (pk). 

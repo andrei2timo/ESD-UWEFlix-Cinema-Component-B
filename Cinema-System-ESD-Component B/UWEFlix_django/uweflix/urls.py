@@ -43,6 +43,7 @@ urlpatterns = [
     path("viewings/", views.viewings, name="viewings"),
     path("showings/<int:film>/", views.showings, name="showings_by_film"),
     path("add_film/", views.add_film, name="add_film"),
+    path("film_list/", views.FilmList.as_view(), name="film_list"),
     path("films_endpoint/", views.films_endpoint, name="films_endpoint"),
     path("specific_film_endpoint/<int:pk>/", views.specific_film_endpoint, name="specific_film_endpoint"),
     path("login/", views.login, name="login"),
