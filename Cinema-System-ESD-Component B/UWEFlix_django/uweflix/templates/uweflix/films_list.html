@@ -1,0 +1,10 @@
+{% extends "uweflix/layout.html" %}
+
+{% block content %}
+  <h1>Films</h1>
+  <ul>
+    {% for film in films %}
+      <li>{{ film.title }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
