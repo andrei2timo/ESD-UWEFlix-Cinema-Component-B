@@ -4,7 +4,12 @@
   <h1>Films</h1>
   <ul>
     {% for film in films %}
-      <li>{{ film.title }}</li>
+      <li>
+        {{ film.title }}
+        <a href="../film_detail/">
+          <input type="submit" name="manage_film" value="Manage" class="btn">
+        </a>
+      </li>
     {% endfor %}
   </ul>
 {% endblock %}
