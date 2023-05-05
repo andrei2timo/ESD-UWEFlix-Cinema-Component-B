@@ -616,10 +616,11 @@ def films_endpoint(request):
         films = Film.objects.all()
         serializer = FilmSerializer(films, many=True)
         Response(serializer.data, status=status.HTTP_200_OK)
-        return render(request, 'uweflix/films_list.html', {'films': serializer.data})
+        return render(request, 'uweflix/films_endpoint.html', {'films': serializer.data})
     elif request.method == 'POST':
         serializer = FilmSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
