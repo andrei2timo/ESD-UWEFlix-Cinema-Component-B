@@ -10,7 +10,9 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
-
+from django.shortcuts import get_object_or_404
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 import re
 import random
@@ -651,6 +653,23 @@ def specific_film_endpoint(request, pk):
     elif request.method == 'DELETE': 
         film.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class FilmDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'uweflix/film_detail.html'
+
+    def get(self, request, pk):
+        film = get_object_or_404(Film, pk=pk)
+        serializer = FilmSerializer(film)
+        return Response({'serializer': serializer, 'film': film})
+
+    def post(self, request, pk):
+        film = get_object_or_404(Film, pk=pk)
+        serializer = FilmSerializer(film, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'film': film})
+        serializer.save()
+        return redirect('films_endpoint')
 
 # This function is responsible for adding a film to the database, deleting a film from the database, 
 # and updating a film in the database. It uses the deleteFilmForm to handle the deletion of a film 

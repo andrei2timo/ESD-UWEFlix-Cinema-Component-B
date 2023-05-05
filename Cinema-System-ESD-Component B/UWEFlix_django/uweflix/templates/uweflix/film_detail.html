@@ -1,0 +1,16 @@
+{% extends "uweflix/layout.html" %}
+{% load rest_framework %}
+{% block content %}
+
+<html><body>
+
+<h1>Profile - {{ film.title }}</h1>
+
+<form action="{% url 'film_detail' pk=film.pk %}" method="POST">
+    {% csrf_token %}
+    {% render_form serializer %}
+    <input type="submit" value="Save">
+</form>
+
+</body></html>
+{% endblock %}
