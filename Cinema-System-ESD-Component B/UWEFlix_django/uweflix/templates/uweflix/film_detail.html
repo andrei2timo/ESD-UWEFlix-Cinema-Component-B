@@ -4,7 +4,8 @@
 
 <html><body>
 
-<h1>Profile - {{ film.title }}</h1>
+<h1>Edit Film</h1>
+<h2>{{ film.title }}</h2>
 
 <form action="{% url 'film_detail' pk=film.pk %}" method="POST">
     {% csrf_token %}

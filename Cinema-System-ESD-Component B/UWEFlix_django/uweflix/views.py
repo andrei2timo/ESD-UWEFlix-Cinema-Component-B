@@ -679,7 +679,8 @@ class FilmDetail(APIView):
 # to the same page with success or error messages displayed.
 def add_film(request):
     form = deleteFilmForm()
-    context = {"form":form}
+    films = Film.objects.all()
+    context = {"form":form, "films": films}
     if request.method == "POST":
         ages = {"U", "PG", "12", "12A", "15", "18"}
         title = request.POST.get('title')
