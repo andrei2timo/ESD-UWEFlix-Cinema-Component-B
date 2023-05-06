@@ -30,6 +30,13 @@ urlpatterns = [
     path('edit_account/<int:myid>/', edit_account, name='edit_account'),
     path('update_account/<int:myid>/', update_account, name='update_account'),
     path('view_account/', view_account, name='view_account'),
+    
+    
+    path('manage_club_rep/', views.manage_club_rep, name='manage_club_rep'),
+    path('add_club_rep', add_club_rep, name='add_club_rep'),
+    path('delete_club_rep/<int:myid>/', delete_club_rep, name='delete_club_rep'),
+    path('edit_club_rep/<int:myid>/', edit_club_rep, name='edit_club_rep'),
+    path('update_club_rep/<int:myid>/', update_club_rep, name='update_club_rep'),
 
     path("google_register/", views.googleAuthRegister, name="googleAuthRegister"),
     

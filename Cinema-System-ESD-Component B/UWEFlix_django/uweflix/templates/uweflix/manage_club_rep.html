@@ -1,0 +1,137 @@
+{% extends "uweflix/layout.html" %}
+{% load static %}
+{% block title %}
+Account Modify
+{% endblock %}
+{% block content %}
+<h1>Manage Club Representatives</h1>
+<hr/>
+<script>
+    $( function() {
+      $( "#id_dob" ).datepicker({
+          dateFormat: "yy-mm-dd",
+          yearRange: "-100:+0"
+      });
+    } );
+</script>
+
+
+<div class="container mt-3">
+
+
+    {% for message in messages %}
+    <p class='alert alert-success mt-3'>{{message}}</p>
+    {%endfor%}
+
+
+
+
+    {% if sel_rep %}
+    <form method="POST" action="{% url 'update_club_rep' sel_rep.id %}">
+        {% csrf_token %}
+        <div class="form-group mb-3"> 
+          <label> First Name: </label>
+          <input type="text" class="form-control" value="{{ sel_rep.user.first_name }}" name="user.first_name" placeholder="Enter First Name">
+        </div>
+        <div class="form-group mb-3"> 
+          <label> Last Name: </label>
+          <input type="text" class="form-control" value="{{ sel_rep.user.last_name }}" name="user.last_name" placeholder="Enter Last Name">
+        </div>
+        <div class="form-group mb-3"> 
+            <label> Date of Birth: </label>
+            <input type="date" class="form-control" value="{{sel_rep.dob|date:'Y-m-d'}}" name="dob" placeholder="Enter dob" format="yyyy-mm-dd">
+          </div>
+            <div class="form-group">
+            <label for="club">Club:</label>
+            <select class="form-control" id="club" name="club">
+                {% for club in club_list %}
+                <option value="{{ club.id }}" {% if sel_rep.club.id == club.id %}selected{% endif %}>{{ club.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success">UPDATE</button>
+        </div>
+      </form>
+
+    {% else %}
+
+    <form method="POST" action="{% url 'add_club_rep' %}">
+        {% csrf_token %}
+        <div class="form-group mb-3"> 
+         <label> First Name: </label>
+         <input type="text" class="form-control" name="first_name" placeholder="Enter First Name" readonly>
+     </div>
+     <div class="form-group mb-3"> 
+       <label> Last Name: </label>
+       <input type="text" class="form-control" name="last_name" placeholder="Enter Last Name" readonly>
+   </div>
+       <div class="form-group mb-3"> 
+           <label> Date of Birth: </label>
+           <input type="text" class="form-control" name="username" placeholder="Enter Date of Birth:" readonly>
+       </div>
+       
+        <div class="form-group">
+        <label for="club">Club:</label>
+        <select class="form-control" id="club" name="club">
+            {% for club in club_list %}
+            <option value="{{ club.id }}" {% if sel_rep.club.id == club.id %}selected{% endif %}  readonly>{{ club.name }} </option>
+            {% endfor %}
+        </select>
+      </div>
+
+      
+          
+       </div> 
+   </form>
+   
+
+    {% endif %}
+
+    <div class="mt-5" >
+        <table class="table" >
+            <thead>
+              <tr>
+                <th scope="col">User No.</th>
+                <th scope="col">User</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Second Name</th>
+                <th scope="col">Date-of-Birth</th>
+                <th scope="col">Credits</th>
+                <th scope="col">Club</th>
+                <th scope="col">Club Representative Number</th>
+                <th scope="col">Edit</th>
+                <th>Delete</h1>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in rep_list %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.user}}</td>
+                <td>{{i.user.first_name}}</td>
+                <td>{{i.user.last_name}}</td>
+                <td>{{i.dob}}</td>
+                <td>{{i.credit}}</td>
+                <td>{{i.club}}</td>
+                <td>{{i.club_rep_num}}</td>
+                <td>
+                    <a href="{% url 'edit_club_rep' i.id%}" class="btn btn-warning">EDIT</a>
+                </td>
+                <td>
+                    <a href="{% url 'delete_club_rep' i.id%}" class="btn btn-danger">DELETE</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    
+</div>
+
+ 
+
+
+
+{% endblock %}

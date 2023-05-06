@@ -25,6 +25,106 @@ from django.http import JsonResponse
 
 
 
+def manage_club_rep(request):
+    rep_list = ClubRep.objects.all()
+    context = {
+        'rep_list': rep_list
+    }
+    return render(request, 'uweflix/manage_club_rep.html', context)
+
+
+def add_club_rep(request):
+    if request.method == "POST":
+        try:
+            user = request.POST['user']
+            if not user or any(char.isdigit() for char in user):
+                raise ValueError("Invalid user")
+            first_name = request.POST['user.first_name']
+            if not first_name or any(char.isdigit() for char in first_name):
+                raise ValueError("user.first_name")
+            last_name = request.POST['user.last_name']
+            if not last_name or any(char.isdigit() for char in last_name):
+                raise ValueError("Invalid Last Name")
+            dob = request.POST['dob']
+            if not dob or any(char.isdigit() for char in dob):
+                raise ValueError("Invalid dob")
+            credit = request.POST['credit']
+            if not credit:
+                raise ValueError("Please enter a valid credit")
+            club = request.POST['club']
+            if not user or any(char.isdigit() for char in club):
+                raise ValueError("Invalid club")
+            club_rep_num = request.POST['club_rep_num']
+            if not user or any(char.isdigit() for char in club_rep_num):
+                raise ValueError("Invalid club_rep_num")
+
+            user = User(user=user, dob=dob,
+                        credit=credit, club=club, club_rep_num=club_rep_num, first_name=user.first_name, last_name=user.last_name)
+            user.save()
+
+            # create a new ClubRep object and associate it with the User object
+            club_rep = ClubRep(user=user)
+            club_rep.save()
+
+            messages.success(request, "User added successfully")
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('manage_club_rep')
+
+    # query the ClubRep objects along with their associated User objects
+    rep_list = ClubRep.objects.select_related('user').all()
+
+    context = {
+        'rep_list': rep_list
+    }
+    return render(request, 'uweflix/manage_club_rep.html', context)
+
+
+def delete_club_rep(request, myid):  # Manage Accounts
+    user_rep = ClubRep.objects.get(id=myid)
+    user_rep.delete()
+    messages.info(request, 'USER DELETED SUCCESSFULLY')
+    return redirect(manage_club_rep)
+
+
+def edit_club_rep(request, myid):  # Manage Accounts
+    sel_rep = ClubRep.objects.get(id=myid)
+    rep_list = ClubRep.objects.all()
+    club_list = Club.objects.all()
+    context = {
+        'sel_rep': sel_rep,
+        'rep_list': rep_list,
+        'club_list': club_list
+    }
+    return render(request, 'uweflix/manage_club_rep.html', context)
+
+
+def update_club_rep(request, myid):
+    user_rep = ClubRep.objects.get(id=myid)
+
+    if 'user.first_name' in request.POST:
+        user_rep.user.first_name = request.POST['user.first_name']
+    if 'user.last_name' in request.POST:
+        user_rep.user.last_name = request.POST['user.last_name']
+    if 'dob' in request.POST:
+        user_rep.dob = request.POST['dob']
+    club_id = request.POST['club']
+    user_rep.club = Club.objects.get(id=club_id)
+    if 'club_rep_num' in request.POST:
+        user_rep.club_rep_num = request.POST['club_rep_num']
+
+    user_rep.user.save()
+    user_rep.save()
+
+    messages.info(request, "THE USER HAS BEEN UPDATED SUCCESSFULLY")
+    return redirect('manage_club_rep')
+
+
+
+
+
+
+
 
 #At first, it initializes the DateIntervalForm() to get the start and end date from the user. It then sets up the context dictionary with the form and a title to display on the page.
 #Next, the function checks if the HTTP method is "POST". If it is, it validates the form data and gets the start and end dates from the form. It then filters the Transaction model by the selected date range to get all the transactions made within that period.
