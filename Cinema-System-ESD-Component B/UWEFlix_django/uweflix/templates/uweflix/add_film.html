@@ -49,15 +49,15 @@
     <br />
     <br />
     <h2>Edit Film Details</h2>
-      <ul class="list-group"> 
-        {% for film in films %}
-          <li class="list-group-item d-flex justify-content-between">
-            {{ film.title }}
-            <a href="../film_detail/{{film.id}}">
-              <input type="submit" name="manage_film" value="Edit" class="btn btn-warning">
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
+    <ul class="list-group"> 
+      {% for film in films %}
+        <li class="list-group-item d-flex justify-content-between">
+          {{ film.title }}
+          <a href="../film_detail/{{film.id}}">
+            <input type="submit" name="edit_film" value="Edit" class="btn btn-warning">
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </div> {% endblock %}
