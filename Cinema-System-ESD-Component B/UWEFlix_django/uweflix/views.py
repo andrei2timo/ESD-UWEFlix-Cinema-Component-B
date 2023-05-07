@@ -654,20 +654,27 @@ def specific_film_endpoint(request, pk):
         film.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+# This is a Django Rest Framework API class created as a view that handles GET, and POST requests for a specific Film 
+# object identified by its primary key (pk). What makes this class different from the API view above is that a GET
+# request to this class' endpoint will render a film detail form, letting the user edit film details. Pressing submit 
+# on this form activates the POST method and updates the film. This is an example of how the Django REST Framework can 
+# be integrated into the user interface for updating models
+
 class FilmDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
     template_name = 'uweflix/film_detail.html'
 
     def get(self, request, pk):
         film = get_object_or_404(Film, pk=pk)
         serializer = FilmSerializer(film)
-        return Response({'serializer': serializer, 'film': film})
+        return Response({'serializer': serializer, 'film': film, 'style': self.style})
 
     def post(self, request, pk):
         film = get_object_or_404(Film, pk=pk)
         serializer = FilmSerializer(film, data=request.data)
         if not serializer.is_valid():
-            return Response({'serializer': serializer, 'film': film})
+            return Response({'serializer': serializer, 'film': film, 'style': self.style})
         serializer.save()
         return redirect('add_film')
 
