@@ -10,12 +10,12 @@ from .models import Club, ClubRep, Customer, Film, Prices, Screen, Showing, Tick
 class FilmSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
-        fields = ('title', 'age_rating', 'duration', 'trailer_desc', 'image')
+        fields = ('id', 'title', 'age_rating', 'duration', 'trailer_desc', 'image')
 
 class ScreenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Screen
-        fields = ('capacity', 'apply_covid_restrictions')
+        fields = ('id', 'capacity', 'apply_covid_restrictions')
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:

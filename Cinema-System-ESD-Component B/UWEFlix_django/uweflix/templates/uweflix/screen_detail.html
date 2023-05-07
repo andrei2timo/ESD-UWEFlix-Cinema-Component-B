@@ -1,0 +1,18 @@
+{% extends "uweflix/layout.html" %}
+{% load rest_framework %}
+{% block content %}
+
+<html><body>
+
+<h1>Edit Screen {{ screen.id }}</h1>
+<div class="box-element p-4" id="form-wrapper">
+    <form id="form" class="form-group" action="{% url 'screen_detail' pk=screen.pk %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% render_form serializer %}
+        <hr/>
+        <input type="submit" value="Save Changes" class="btn btn-warning float-right">
+    </form>
+</div>
+
+</body></html>
+{% endblock %}

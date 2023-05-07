@@ -1,0 +1,33 @@
+{% extends "uweflix/layout.html" %}
+{% load rest_framework %}
+{% block content %}
+
+<html><body>
+
+<h1>Edit Film</h1>
+<h2>{{ film.title }}</h2>
+<div class="box-element p-4" id="form-wrapper">
+    <form id="form" class="form-group" action="{% url 'film_detail' pk=film.pk %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-field">
+            {% render_field serializer.title style=style %}
+        </div>
+        <div class="form-field">
+            {% render_field serializer.age_rating style=style %}
+        </div>
+        <div class="form-field">
+            {% render_field serializer.duration style=style %}
+        </div>
+        <div class="form-field">
+            {% render_field serializer.trailer_desc style=style %}
+        </div>
+        <div class="form-field">
+            {% render_field serializer.image style=style %}
+        </div>
+        <hr/>
+        <input type="submit" value="Save Changes" class="btn btn-warning float-right">
+    </form>
+</div>
+
+</body></html>
+{% endblock %}

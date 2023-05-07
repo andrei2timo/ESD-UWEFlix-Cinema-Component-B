@@ -1,6 +1,7 @@
-{% extends "uweflix/layout.html" %} {% block title %} Add a film {% endblock %} {% block content %} <h2>Add Film</h2>
+{% extends "uweflix/layout.html" %} {% block title %} Add a film {% endblock %} {% block content %}
 <div class="row">
   <div class="col-lg-6">
+    <h2>Add Film</h2>
     <div class="box-element" id="form-wrapper">
       <form id="form" method="POST" enctype="multipart/form-data"> {% csrf_token %} <div id="film-info">
           <div class="form-field">
@@ -42,36 +43,15 @@
     <br />
     <br />
     <h2>Edit Film Details</h2>
-    <div class="box-element" id="form-wrapper">
-      <form id="form" method="POST"> {% csrf_token %} {{ form.as_p }}
-        <hr>
-        <div id="film-info">
-          <div class="form-field">
-            <input required class="form-control" type="text" name="edit_title" placeholder="Title.." maxlength="100">
-          </div>
-          <div class="form-field">
-            <input required list="ages" class="form-control" name="edit_age_rating" placeholder="Age Rating..">
-          </div>
-          <datalist id="ages">
-            <option value="U">
-            <option value="PG">
-            <option value="12">
-            <option value="12A">
-            <option value="15">
-            <option value="18">
-          </datalist>
-          <div class="form-field">
-            <input required class="form-control" type="text" name="edit_duration" placeholder="Duration.." maxlength="3">
-          </div>
-          <div class="form-field">
-            <input required class="form-control" type="text" name="edit_trailer_desc" placeholder="Trailer Description.." maxlength="500">
-          </div>
-          <div class="form-field"> (Optional) Image: <input class="form-control" type="file" accept="image/*" name="edit_image">
-          </div>
-        </div>
-        <hr>
-        <input type="submit" name="edit_film" value="Edit Film" class="btn btn-warning">
-      </form>
-    </div>
+    <ul class="list-group"> 
+      {% for film in films %}
+        <li class="list-group-item d-flex justify-content-between">
+          {{ film.title }}
+          <a href="../film_detail/{{film.id}}">
+            <input type="submit" name="edit_film" value="Edit" class="btn btn-warning">
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </div> {% endblock %}

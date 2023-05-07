@@ -1,0 +1,15 @@
+{% extends "uweflix/layout.html" %}
+
+{% block content %}
+  <h1>Clubs</h1>
+  <ul class="list-group"> 
+    {% for club in clubs %}
+      <li class="list-group-item d-flex justify-content-between">
+        {{ club.name }}
+        <a href="../club_detail/{{club.id}}">
+          <input type="submit" name="edit_club" value="Edit" class="btn btn-warning">
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

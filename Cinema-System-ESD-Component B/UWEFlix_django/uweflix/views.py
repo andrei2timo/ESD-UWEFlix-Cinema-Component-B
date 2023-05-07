@@ -10,6 +10,9 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 import re
 import random
@@ -715,10 +718,12 @@ def films_endpoint(request):
     if request.method == 'GET':
         films = Film.objects.all()
         serializer = FilmSerializer(films, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'uweflix/films_endpoint.html', {'films': serializer.data})
     elif request.method == 'POST':
         serializer = FilmSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -748,6 +753,30 @@ def specific_film_endpoint(request, pk):
     elif request.method == 'DELETE': 
         film.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+# This is a Django Rest Framework API class created as a view that handles GET, and POST requests for a specific Film 
+# object identified by its primary key (pk). What makes this class different from the API view above is that a GET
+# request to this class' endpoint will render a film detail form, letting the user edit film details. Pressing submit 
+# on this form activates the POST method and updates the film. This is an example of how the Django REST Framework can 
+# be integrated into the user interface for updating models
+
+class FilmDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
+    template_name = 'uweflix/film_detail.html'
+
+    def get(self, request, pk):
+        film = get_object_or_404(Film, pk=pk)
+        serializer = FilmSerializer(film)
+        return Response({'serializer': serializer, 'film': film, 'style': self.style})
+
+    def post(self, request, pk):
+        film = get_object_or_404(Film, pk=pk)
+        serializer = FilmSerializer(film, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'film': film, 'style': self.style})
+        serializer.save()
+        return redirect('add_film')
 
 # This function is responsible for adding a film to the database, deleting a film from the database, 
 # and updating a film in the database. It uses the deleteFilmForm to handle the deletion of a film 
@@ -757,7 +786,8 @@ def specific_film_endpoint(request, pk):
 # to the same page with success or error messages displayed.
 def add_film(request):
     form = deleteFilmForm()
-    context = {"form":form}
+    films = Film.objects.all()
+    context = {"form":form, "films": films}
     if request.method == "POST":
         ages = {"U", "PG", "12", "12A", "15", "18"}
         title = request.POST.get('title')
@@ -878,7 +908,8 @@ def screens_endpoint(request):
     if request.method == 'GET':
         screens = Screen.objects.all()
         serializer = ScreenSerializer(screens, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'uweflix/screens_endpoint.html', {'screens': serializer.data})
     elif request.method == 'POST':
         serializer = ScreenSerializer(data=request.data)
         if serializer.is_valid():
@@ -911,6 +942,26 @@ def specific_screen_endpoint(request, pk):
     elif request.method == 'DELETE': 
         screen.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+### TODO: Comment me
+
+class ScreenDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
+    template_name = 'uweflix/screen_detail.html'
+
+    def get(self, request, pk):
+        screen = get_object_or_404(Screen, pk=pk)
+        serializer = ScreenSerializer(screen)
+        return Response({'serializer': serializer, 'screen': screen, 'style': self.style})
+
+    def post(self, request, pk):
+        screen = get_object_or_404(Screen, pk=pk)
+        serializer = ScreenSerializer(screen, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'screen': screen, 'style': self.style})
+        serializer.save()
+        return redirect('add_screen')
 
 # This is a view function for adding a new screen and editing existing screens. It renders a form to 
 # add a new screen and lists all the existing screens with options to edit them. If the user 
@@ -957,26 +1008,6 @@ def add_screen(request):
     context['form1'] = form1
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
-
-# This is a Django REST Framework API view function that handles GET and POST requests for the 'showings' 
-# endpoint. If a GET request is received, all 'Showing' objects are retrieved from the database and 
-# serialized using the 'ShowingSerializer', then returned with a 200 status code. If a POST request
-# is received, the data from the request is deserialized using the 'ShowingSerializer' and if the data 
-# is valid, a new 'Showing' object is created and saved to the database, and the serialized data for 
-# the new object is returned with a 201 status code. If the data is invalid, a 400 status code is 
-# returned along with the validation errors.
-@api_view(['GET','POST']) # @here see if this works with relations
-def showings_endpoint(request):
-    if request.method == 'GET':
-        showings = Showing.objects.all()
-        serializer = ShowingSerializer(showings, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
-        serializer = ShowingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # This is a view function named `add_showing` that adds a new showing to the database. The function takes
 # a request object as its parameter, initializes an empty context dictionary and an `addShowingForm` 
@@ -1535,7 +1566,8 @@ def clubs_endpoint(request):
     if request.method == 'GET':
         clubs = Club.objects.all()
         serializer = ClubSerializer(clubs, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'uweflix/clubs_endpoint.html', {'clubs': serializer.data})
     elif request.method == 'POST':
         serializer = ClubSerializer(data=request.data)
         if serializer.is_valid():
@@ -1568,13 +1600,32 @@ def specific_club_endpoint(request, pk):
         club.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ClubDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
+    template_name = 'uweflix/club_detail.html'
+
+    def get(self, request, pk):
+        club = get_object_or_404(Club, pk=pk)
+        serializer = ClubSerializer(club)
+        return Response({'serializer': serializer, 'club': club, 'style': self.style})
+
+    def post(self, request, pk):
+        club = get_object_or_404(Club, pk=pk)
+        serializer = ClubSerializer(club, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'club': club, 'style': self.style})
+        serializer.save()
+        return redirect('add_club')
+
 # This function handles the addition of a new club. It initializes an empty context dictionary and 
 # an instance of the addClubForm. If the request method is POST, it validates the submitted form, 
 # creates a new Club instance with the submitted data, saves it, and displays a success message. 
 # It then redirects the user to the cinema manager home page. The rendered template is 
 # "Uweflix/add_club.html".
 def add_club(request):
-    context = {}
+    clubs = Club.objects.all()
+    context = {"clubs": clubs}
     form = addClubForm()
     if request.method == "POST":
         form = addClubForm(request.POST)

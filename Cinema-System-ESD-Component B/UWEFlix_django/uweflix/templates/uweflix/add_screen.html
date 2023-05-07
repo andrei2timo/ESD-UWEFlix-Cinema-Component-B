@@ -1,7 +1,7 @@
 {% extends "uweflix/layout.html" %}
 {% load static %}
 {% block title %}
-Add/Edit Screen
+Manage Screens
 {% endblock %}
 {% block content %}
 
@@ -22,22 +22,15 @@ Add/Edit Screen
 </form>
 <br/><br/><br/>
 
-<h1>Edit Screen details</h1>
-<form method="POST" class="box-element" autocomplete="off">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="selected_screen">Select Screen:</label>
-        <select id="selected_screen" name="selected_screen">
-            {% for option in options %}
-            <option value="{{ option.id }}">{{ option }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        {{ form1.as_p }}
-    </div>
-    <div class="form-group">
-        <button type="submit" name="edit_screen" value="Edit Screen" class="btn btn-warning">Edit Screen</button>
-    </div>
-</form>
+<h1>Edit Screen Details</h1>
+<ul class="list-group"> 
+  {% for screen in screens %}
+    <li class="list-group-item d-flex justify-content-between">
+      Screen {{ screen.id }}
+      <a href="../screen_detail/{{screen.id}}">
+        <input type="submit" name="edit_screen" value="Edit" class="btn btn-warning">
+      </a>
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}

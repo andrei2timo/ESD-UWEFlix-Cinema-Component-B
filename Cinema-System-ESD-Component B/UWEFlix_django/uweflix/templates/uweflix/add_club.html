@@ -5,17 +5,28 @@ Add Club
 {% endblock %}
 {% block content %}
 <h1>Add Club</h1>
-    <form method="post" class="form-area">
-        <hr/>
-        {% csrf_token %}
-        <div class="form-group">
-        {{ form.as_p }}
-        </div>
-        <br/>
-        <br/>
-        <hr/>
-        <div class="form-group">
-            <button id="confirm-btn" type="submit" class="btn btn-warning">Add Club</button>
-        </div>
-    </form>
+<form method="post" class="form-area">
+    <hr/>
+    {% csrf_token %}
+    <div class="form-group">
+    {{ form.as_p }}
+    </div>
+    <br/>
+    <br/>
+    <hr/>
+    <div class="form-group">
+        <button id="confirm-btn" type="submit" class="btn btn-warning">Add Club</button>
+    </div>
+</form>
+<h1>Edit Club Details</h1>
+<ul class="list-group"> 
+  {% for club in clubs %}
+    <li class="list-group-item d-flex justify-content-between">
+      {{ club.name }}
+      <a href="../club_detail/{{club.id}}">
+        <input type="submit" name="edit_club" value="Edit" class="btn btn-warning">
+      </a>
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}
