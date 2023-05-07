@@ -841,6 +841,24 @@ def specific_screen_endpoint(request, pk):
     elif request.method == 'DELETE': 
         screen.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ScreenDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
+    template_name = 'uweflix/screen_detail.html'
+
+    def get(self, request, pk):
+        screen = get_object_or_404(Screen, pk=pk)
+        serializer = ScreenSerializer(screen)
+        return Response({'serializer': serializer, 'screen': screen, 'style': self.style})
+
+    def post(self, request, pk):
+        screen = get_object_or_404(Screen, pk=pk)
+        serializer = ScreenSerializer(screen, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'screen': screen, 'style': self.style})
+        serializer.save()
+        return redirect('add_screen')
 
 # This is a view function for adding a new screen and editing existing screens. It renders a form to 
 # add a new screen and lists all the existing screens with options to edit them. If the user 

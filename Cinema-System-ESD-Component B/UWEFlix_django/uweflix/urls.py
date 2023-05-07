@@ -75,6 +75,7 @@ urlpatterns = [
     path("request_cancellation/", views.request_cancellation, name="request_cancellation"),
     path("approve_cancellations/", views.approve_cancellation, name="approve_cancellations"),
     path("screens_endpoint/", views.screens_endpoint, name="screens_endpoint"),
+    path("screen_detail/<int:pk>/", views.ScreenDetail.as_view(), name="screen_detail"),
     path("specific_screen_endpoint/<int:pk>/", views.specific_screen_endpoint, name="specific_screen_endpoint"),
     path("add_screen/", views.add_screen, name="add_screen"),
     path("add_showing/", views.add_showing, name="add_showing"),
