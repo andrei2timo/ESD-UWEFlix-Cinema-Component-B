@@ -1226,18 +1226,18 @@ def userpage(request):
     context = {}
     return render(request, 'uweflix/user.html', context)
 
-def handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_cents, student_in_cents, child_in_cents):
+def handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp):
     request.session['payment_data'] = {
         'total_cost': total_cost,
         'adult_tickets': adult_tickets,
         'student_tickets': student_tickets,
         'child_tickets': child_tickets,
         'showing': showing.id,
-        'adult_in_cents': adult_in_cents,
-        'student_in_cents': student_in_cents,
-        'child_in_cents': child_in_cents,
+        'adult_in_gbp': adult_in_gbp,
+        'student_in_gbp': student_in_gbp,
+        'child_in_gbp': child_in_gbp,
     }
-    checkout_session = create_checkout_session(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_cents, student_in_cents, child_in_cents)
+    checkout_session = create_checkout_session(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
     return redirect(checkout_session.url)
 
 # The `payment` function handles the payment process for movie tickets. It retrieves the showing, adult, 
@@ -1253,9 +1253,9 @@ def payment(request, showing):
             return redirect('rep_payment', showing=showing)
 
     adult_price,student_price,child_price=Prices.getCurrentPrices()
-    adult_in_cents = int(adult_price * 100)
-    student_in_cents = int(student_price * 100)
-    child_in_cents = int(child_price * 100)
+    adult_in_gbp = int(adult_price * 100)
+    student_in_gbp = int(student_price * 100)
+    child_in_gbp = int(child_price * 100)
 
     showing = Showing.getShowing(id=showing)
     form = PaymentForm()
@@ -1292,7 +1292,7 @@ def payment(request, showing):
                             user.save()
                             paying = True
                         elif payment_option == "nopay":
-                            return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_cents, student_in_cents, child_in_cents)
+                            return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
                         else:
                             context = {'error': "Credit error: You do not have sufficient credit to make this order, please add funds and try again."}
                             return render(request, "uweflix/error.html", context)
@@ -1300,7 +1300,7 @@ def payment(request, showing):
                         context = {'error': "Account based error: Your account type is not permitted to purchase tickets. Please change accounts and try again."}
                         return render(request, "uweflix/error.html", context)
                 elif payment_option == "nopay":
-                    return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_cents, student_in_cents, child_in_cents)
+                    return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
                 else:
                     context = {'error': "As a regular customer, you may only make purchases via credit card. Please go back and select this option."}
                     return render(request, "uweflix/error.html", context)
