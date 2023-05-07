@@ -1,12 +1,6 @@
 {% extends "uweflix/layout.html" %} {% block title %} Add a film {% endblock %} {% block content %}
 <div class="row">
   <div class="col-lg-6">
-    <!-- <h2>View Films</h2>
-    <a href="../films_endpoint/">
-      <input type="submit" name="view_films" value="View Films" class="btn btn-warning">
-    </a>
-    <br/>
-    <br/> -->
     <h2>Add Film</h2>
     <div class="box-element" id="form-wrapper">
       <form id="form" method="POST" enctype="multipart/form-data"> {% csrf_token %} <div id="film-info">
