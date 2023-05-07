@@ -1,0 +1,15 @@
+{% extends "uweflix/layout.html" %}
+
+{% block content %}
+  <h1>Screens</h1>
+  <ul class="list-group"> 
+    {% for screen in screens %}
+      <li class="list-group-item d-flex justify-content-between">
+        Screen {{ screen.id }}
+        <a href="../screen_detail/{{screen.id}}">
+          <input type="submit" name="edit screen" value="Edit" class="btn btn-warning">
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

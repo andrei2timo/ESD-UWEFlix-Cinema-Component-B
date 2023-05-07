@@ -15,7 +15,7 @@ class FilmSerializer(serializers.ModelSerializer):
 class ScreenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Screen
-        fields = ('capacity', 'apply_covid_restrictions')
+        fields = ('id', 'capacity', 'apply_covid_restrictions')
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:

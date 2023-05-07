@@ -808,7 +808,8 @@ def screens_endpoint(request):
     if request.method == 'GET':
         screens = Screen.objects.all()
         serializer = ScreenSerializer(screens, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'uweflix/screens_endpoint.html', {'screens': serializer.data})
     elif request.method == 'POST':
         serializer = ScreenSerializer(data=request.data)
         if serializer.is_valid():
@@ -1465,7 +1466,8 @@ def clubs_endpoint(request):
     if request.method == 'GET':
         clubs = Club.objects.all()
         serializer = ClubSerializer(clubs, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        Response(serializer.data, status=status.HTTP_200_OK)
+        return render(request, 'uweflix/clubs_endpoint.html', {'clubs': serializer.data})
     elif request.method == 'POST':
         serializer = ClubSerializer(data=request.data)
         if serializer.is_valid():
