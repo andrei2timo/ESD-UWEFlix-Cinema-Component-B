@@ -841,7 +841,9 @@ def specific_screen_endpoint(request, pk):
     elif request.method == 'DELETE': 
         screen.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+### TODO: Comment me
+
 class ScreenDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     style = {'template_pack': 'rest_framework/vertical/'}
@@ -1496,13 +1498,32 @@ def specific_club_endpoint(request, pk):
         club.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ClubDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    style = {'template_pack': 'rest_framework/vertical/'}
+    template_name = 'uweflix/club_detail.html'
+
+    def get(self, request, pk):
+        club = get_object_or_404(Club, pk=pk)
+        serializer = ClubSerializer(club)
+        return Response({'serializer': serializer, 'club': club, 'style': self.style})
+
+    def post(self, request, pk):
+        club = get_object_or_404(Club, pk=pk)
+        serializer = ClubSerializer(club, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'club': club, 'style': self.style})
+        serializer.save()
+        return redirect('add_club')
+
 # This function handles the addition of a new club. It initializes an empty context dictionary and 
 # an instance of the addClubForm. If the request method is POST, it validates the submitted form, 
 # creates a new Club instance with the submitted data, saves it, and displays a success message. 
 # It then redirects the user to the cinema manager home page. The rendered template is 
 # "Uweflix/add_club.html".
 def add_club(request):
-    context = {}
+    clubs = Club.objects.all()
+    context = {"clubs": clubs}
     form = addClubForm()
     if request.method == "POST":
         form = addClubForm(request.POST)

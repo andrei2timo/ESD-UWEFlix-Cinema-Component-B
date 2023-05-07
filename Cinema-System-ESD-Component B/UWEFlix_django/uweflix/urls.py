@@ -60,6 +60,7 @@ urlpatterns = [
     path("user/", views.userpage, name="user-page"),
     path("add_club/", views.add_club, name="add_club"),
     path("clubs_endpoint/", views.clubs_endpoint, name="clubs_endpoint"),
+    path("club_detail/<int:pk>/", views.ClubDetail.as_view(), name="club_detail"),
     path("specific_club_endpoint/<int:pk>/", views.specific_club_endpoint, name="specific_club_endpoint"),
     path("add_rep/", views.add_rep, name="add_rep"),
     path("club_rep_home/", views.club_rep_home, name="club_rep_home"),
