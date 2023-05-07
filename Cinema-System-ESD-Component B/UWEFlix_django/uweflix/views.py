@@ -906,26 +906,6 @@ def add_screen(request):
     context['selected_screen'] = selected_screen
     return render(request, 'uweflix/add_screen.html', context)
 
-# This is a Django REST Framework API view function that handles GET and POST requests for the 'showings' 
-# endpoint. If a GET request is received, all 'Showing' objects are retrieved from the database and 
-# serialized using the 'ShowingSerializer', then returned with a 200 status code. If a POST request
-# is received, the data from the request is deserialized using the 'ShowingSerializer' and if the data 
-# is valid, a new 'Showing' object is created and saved to the database, and the serialized data for 
-# the new object is returned with a 201 status code. If the data is invalid, a 400 status code is 
-# returned along with the validation errors.
-@api_view(['GET','POST']) # @here see if this works with relations
-def showings_endpoint(request):
-    if request.method == 'GET':
-        showings = Showing.objects.all()
-        serializer = ShowingSerializer(showings, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
-        serializer = ShowingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 # This is a view function named `add_showing` that adds a new showing to the database. The function takes
 # a request object as its parameter, initializes an empty context dictionary and an `addShowingForm` 
 # instance, and gets all existing showings from the database along with their IDs. If there are any 
