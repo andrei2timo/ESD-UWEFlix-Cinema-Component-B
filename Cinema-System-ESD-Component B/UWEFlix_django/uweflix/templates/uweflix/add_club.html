@@ -22,7 +22,7 @@ Add Club
 <ul class="list-group"> 
   {% for club in clubs %}
     <li class="list-group-item d-flex justify-content-between">
-      Club {{ club.id }}
+      {{ club.name }}
       <a href="../club_detail/{{club.id}}">
         <input type="submit" name="edit_club" value="Edit" class="btn btn-warning">
       </a>
