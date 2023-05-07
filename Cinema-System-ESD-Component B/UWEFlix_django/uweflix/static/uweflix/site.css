@@ -58,6 +58,10 @@ footer {
 	height: 200px;
 }
 
+.list-group-item {
+	display: flex
+}
+
 #id_adult_tickets, #id_student_tickets, #id_child_tickets, #id_total_cost, #discount-btn, #id_adult, #id_student, #id_child, #id_rep_student_tickets, #id_apply_covid_restrictions {
 	width:90px;
 	float: right;
