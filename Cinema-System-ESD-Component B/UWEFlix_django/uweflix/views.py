@@ -25,8 +25,102 @@ from rest_framework import status
 from django.http import Http404
 from django.utils import timezone
 from django.http import JsonResponse
+import stripe
+from django.conf import settings
+from django.http.response import JsonResponse
 
+def stripe_config(request):
+    if request.method == 'GET':
+        stripe_config = {'publicKey': settings.STRIPE_PUBLISHABLE_KEY}
+        return JsonResponse(stripe_config, safe=False)
+    
+def create_checkout_session(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_price, student_price, child_price):
+    domain_url = request.build_absolute_uri('/')[:-1]
+    stripe.api_key = settings.STRIPE_SECRET_KEY
 
+    line_items = []
+
+    if adult_tickets > 0:
+        line_items.append({
+            "price_data": {
+                "currency": "gbp",
+                "product_data": {
+                    "name": "Adult Ticket",
+                },
+                "unit_amount": adult_price,
+            },
+            "quantity": adult_tickets,
+        })
+
+    if student_tickets > 0:
+        line_items.append({
+            "price_data": {
+                "currency": "gbp",
+                "product_data": {
+                    "name": "Student Ticket",
+                },
+                "unit_amount": student_price,
+            },
+            "quantity": student_tickets,
+        })
+
+    if child_tickets > 0:
+        line_items.append({
+            "price_data": {
+                "currency": "gbp",
+                "product_data": {
+                    "name": "Child Ticket",
+                },
+                "unit_amount": child_price,
+            },
+            "quantity": child_tickets,
+        })
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=line_items,
+        mode="payment",
+        success_url=domain_url + "/thanks?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=domain_url + "/cancel",
+    )
+
+    process_payment(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing)
+
+    return checkout_session
+
+class CancelledView(TemplateView):
+    template_name = 'uweflix/cancelled.html'
+
+def process_payment(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, ticket_type="all"):
+    new_transaction = Transaction.newTransaction(user, total_cost, True)
+    
+    if ticket_type == "all" or ticket_type == "adult":
+        for i in range(adult_tickets):
+            Ticket.newTicket(new_transaction, showing, "adult")
+    if ticket_type == "all" or ticket_type == "student":
+        for i in range(student_tickets):
+            Ticket.newTicket(new_transaction, showing, "student")
+    if ticket_type == "all" or ticket_type == "child":
+        for i in range(child_tickets):
+            Ticket.newTicket(new_transaction, showing, "child")
+
+    showing.remaining_tickets -= (adult_tickets + student_tickets + child_tickets)
+    showing.save()
+
+    # Store booking data in the session
+    request.session['successful_purchase'] = True
+    request.session['screen'] = showing.screen.id
+    request.session['transaction'] = new_transaction.id
+    request.session['film'] = showing.film.title
+    request.session['age_rating'] = showing.film.age_rating
+    request.session['date'] = showing.time.strftime("%d/%m/%y")
+    request.session['time'] = showing.time.strftime("%H:%M")
+    request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
+    if showing.screen.apply_covid_restrictions:
+        request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
+
+    if 'payment_data' in request.session:
+        del request.session['payment_data']
 
 def manage_club_rep(request):
     rep_list = ClubRep.objects.all()
@@ -1163,6 +1257,20 @@ def userpage(request):
     context = {}
     return render(request, 'uweflix/user.html', context)
 
+def handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp):
+    request.session['payment_data'] = {
+        'total_cost': total_cost,
+        'adult_tickets': adult_tickets,
+        'student_tickets': student_tickets,
+        'child_tickets': child_tickets,
+        'showing': showing.id,
+        'adult_in_gbp': adult_in_gbp,
+        'student_in_gbp': student_in_gbp,
+        'child_in_gbp': child_in_gbp,
+    }
+    checkout_session = create_checkout_session(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
+    return redirect(checkout_session.url)
+
 # The `payment` function handles the payment process for movie tickets. It retrieves the showing, adult, 
 # student, and child prices and creates a payment form. If the form is submitted and valid, the function 
 # checks the remaining tickets and the payment option. If the user is signed in as a student, the function 
@@ -1171,21 +1279,23 @@ def userpage(request):
 # and generates a new ticket for each ticket purchased, then updates the remaining tickets and redirects 
 # to the thank you page.
 def payment(request, showing):
-
     if 'user_id' in request.session:
         if request.session['user_group'] == "Club Rep":
             return redirect('rep_payment', showing=showing)
 
-    adult,student,child=Prices.getCurrentPrices()
+    adult_price,student_price,child_price=Prices.getCurrentPrices()
+    adult_in_gbp = int(adult_price * 100)
+    student_in_gbp = int(student_price * 100)
+    child_in_gbp = int(child_price * 100)
 
     showing = Showing.getShowing(id=showing)
     form = PaymentForm()
     context = {
         "showing": showing,
         "form": form,
-        "adult_price": adult,
-        "student_price": student,
-        "child_price": child
+        "adult_price": adult_price,
+        "student_price": student_price,
+        "child_price": child_price
     }
 
     if request.method == 'POST':
@@ -1198,8 +1308,9 @@ def payment(request, showing):
             total_tickets = adult_tickets + student_tickets + child_tickets
             payment_option = form.cleaned_data.get("payment_options")
             if showing.remaining_tickets < total_tickets: #If there is NOT enough tickets
-                print("Not enough tickets remaining to make this booking.")
-                return render(request, "uweflix/error.html")
+                error_message = "Not enough tickets remaining to make this booking."
+                print(error_message)
+                context['error_message'] = error_message
             else:
                 if 'user_id' in request.session:  # If signed in
                     user_type = request.session['user_group']
@@ -1212,95 +1323,25 @@ def payment(request, showing):
                             user.save()
                             paying = True
                         elif payment_option == "nopay":
-                            return redirect(f'/pay_with_card/?user={user.id}&cost={total_cost}&adult={adult_tickets}&student={student_tickets}&child={child_tickets}&showing={showing.id}')
+                            return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
                         else:
                             context = {'error': "Credit error: You do not have sufficient credit to make this order, please add funds and try again."}
                             return render(request, "uweflix/error.html", context)
                     else:
                         context = {'error': "Account based error: Your account type is not permitted to purchase tickets. Please change accounts and try again."}
                         return render(request, "uweflix/error.html", context)
-                elif payment_option == "nopay":  # Regular customer pays with card
-                    return redirect(f'/pay_with_card/?user={0}&cost={total_cost}&adult={adult_tickets}&student={student_tickets}&child={child_tickets}&showing={showing.id}')
+                elif payment_option == "nopay":
+                    return handle_nopay_option(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing, adult_in_gbp, student_in_gbp, child_in_gbp)
                 else:
                     context = {'error': "As a regular customer, you may only make purchases via credit card. Please go back and select this option."}
                     return render(request, "uweflix/error.html", context)
-                new_transaction = Transaction.newTransaction(user, total_cost, paying)
-                for i in range(adult_tickets):
-                    Ticket.newTicket(new_transaction, showing, "adult")
-                for i in range(student_tickets):
-                    Ticket.newTicket(new_transaction, showing, "student")
-                for i in range(child_tickets):
-                    Ticket.newTicket(new_transaction, showing, "child")
-                showing.remaining_tickets -= (adult_tickets + student_tickets + child_tickets)
-                showing.save()
-                request.session['screen'] = showing.screen.id
-                request.session['transaction'] = new_transaction.id
-                request.session['film'] = showing.film.title
-                request.session['age_rating'] = showing.film.age_rating
-                request.session['date'] = showing.time.strftime("%d/%m/%y")
-                request.session['time'] = showing.time.strftime("%H:%M")
-                request.session['successful_purchase'] = True
-                request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
-                if showing.screen.apply_covid_restrictions:
-                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
-                return redirect('/thanks')
+                
+                process_payment(request, user, total_cost, adult_tickets, student_tickets, child_tickets, showing)
+
+                return redirect('/thanks?from_rep_payment=True')
         else:
             return render(request, 'uweflix/payment.html', context={'form':form, "showing": showing})
     return render(request, 'uweflix/payment.html', context)
-
-# The pay_with_card function is a view function in the UWEFlix web application. It handles the process 
-# of a user making a payment for cinema tickets using a card. It receives the user's input from a 
-# CardPaymentForm, validates it and creates Ticket and Transaction objects to complete the purchase. 
-# It then stores relevant information about the purchase in the user's session and redirects them to a 
-# thank-you page. If the form is not valid, it will render the payment page again with the invalid form.
-def pay_with_card(request):
-    form = CardPaymentForm()
-    context = {
-        'user': request.GET.get('user'),
-        'cost': request.GET.get('cost'),
-        'adult': request.GET.get('adult'),
-        'student': request.GET.get('student'),
-        'child': request.GET.get('child'),
-        'showing': request.GET.get('showing'),
-        'form':form
-    }
-    if request.method=="POST":
-        form = CardPaymentForm(request.POST)
-        if form.is_valid():
-            id = int(context['user'])
-            user=None
-            if id == 0:
-                pass
-            else:
-                user= Customer.objects.get(id= context['user'])
-            total_cost = float(context['cost'])
-            adult_tickets = int(context['adult'])
-            child_tickets = int(context['child'])
-            student_tickets = int(context['student'])
-            showing = Showing.getShowing(int(context['showing']))
-            new_transaction = Transaction.newTransaction(user, total_cost, True)
-            for i in range(adult_tickets):
-                Ticket.newTicket(new_transaction, showing, "adult")
-            for i in range(student_tickets):
-                Ticket.newTicket(new_transaction, showing, "student")
-            for i in range(child_tickets):
-                Ticket.newTicket(new_transaction, showing, "child")
-            showing.remaining_tickets -= (adult_tickets + student_tickets + child_tickets)
-            showing.save()
-            request.session['screen'] = showing.screen.id
-            request.session['transaction'] = new_transaction.id
-            request.session['film'] = showing.film.title
-            request.session['age_rating'] = showing.film.age_rating
-            request.session['date'] = showing.time.strftime("%d/%m/%y")
-            request.session['time'] = showing.time.strftime("%H:%M")
-            request.session['successful_purchase'] = True
-            request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
-            if showing.screen.apply_covid_restrictions:
-                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
-            return redirect('/thanks')
-        else: return render(request,"uweflix/pay_with_card.html",{'form':form})
-
-    return render(request,"uweflix/pay_with_card.html",context)
 
 # The `rep_payment` function processes a payment for a club representative who is purchasing tickets on
 # behalf of their club. The function retrieves the showing being booked and the representative's discount 
@@ -1346,22 +1387,10 @@ def rep_payment(request, showing):
                 else:
                     context = {'error': "Credit error: You do not have sufficient credit to make this order, please add funds and try again."}
                     return render(request, "uweflix/error.html", context)
-                new_transaction = Transaction.newTransaction(user, total_cost, paying)
-                for i in range(student_tickets):
-                    Ticket.newTicket(new_transaction, showing, "student")
-                showing.remaining_tickets -= student_tickets
-                showing.save()
-                request.session['screen'] = showing.screen.id
-                request.session['transaction'] = new_transaction.id
-                request.session['film'] = showing.film.title
-                request.session['age_rating'] = showing.film.age_rating
-                request.session['date'] = showing.time.strftime("%d/%m/%y")
-                request.session['time'] = showing.time.strftime("%H:%M")
-                request.session['successful_purchase'] = True
-                request.session['covid_restrictions'] = showing.screen.apply_covid_restrictions
-                if showing.screen.apply_covid_restrictions:
-                    request.session['allocated_seat'] = showing.screen.capacity - showing.remaining_tickets
-                return redirect('/thanks')
+                
+                process_payment(request, user, total_cost, 0, student_tickets, 0, showing, ticket_type="student")
+
+                return redirect('/thanks?from_rep_payment=True')
         else:
             print("invalid")
             return render(request, 'uweflix/rep_payment.html', context={'form':form, "showing": showing})
@@ -1372,9 +1401,25 @@ def rep_payment(request, showing):
 # found, the function raises an Http404 exception. If the key is found, it is removed from the session, 
 # and the function returns an HTML page rendered by the Django template engine.
 def thanks(request):
-    if 'successful_purchase' not in request.session:
+    session_id = request.GET.get('session_id', None)
+    from_rep_payment = request.GET.get('from_rep_payment', False)
+    
+    print(f"from_rep_payment: {from_rep_payment}")
+    print(f"successful_purchase: {request.session.get('successful_purchase', False)}")
+
+    if from_rep_payment == 'True' and request.session.get('successful_purchase', False):
+        pass
+    elif session_id is not None:
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        session = stripe.checkout.Session.retrieve(session_id)
+
+        if session.payment_status == 'paid':
+            request.session['successful_purchase'] = True
+        else:
+            raise Http404("Forbidden access to this page.")
+    else:
         raise Http404("Forbidden access to this page.")
-    del request.session['successful_purchase']
+
     return render(request, "uweflix/thanks.html")
 
 # The `error` function is a view in the `uweflix` Django web application that simply renders the 

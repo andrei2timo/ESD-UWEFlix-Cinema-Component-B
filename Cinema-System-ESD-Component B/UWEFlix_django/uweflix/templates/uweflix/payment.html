@@ -47,6 +47,11 @@ Payment
             <div class="alert-error">
                 {{ form.non_field_errors }}
             </div>
+            {% if error_message %}
+                <div style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; padding: 12px; margin-bottom: 10px; border: 1px solid; border-radius: 4px;">
+                    {{ error_message }}
+                </div>
+            {% endif %}
             <div class="form-area">
                 <div class="form-group">
                     Adult tickets (£<span id="payment_adult_price">{{ adult_price | floatformat:2 }}</span>): {{ form.adult_tickets }}
@@ -76,3 +81,4 @@ Payment
     </div>
 </body>
 {% endblock %}
+

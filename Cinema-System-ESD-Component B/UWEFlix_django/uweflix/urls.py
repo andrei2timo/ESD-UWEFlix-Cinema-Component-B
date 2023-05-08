@@ -59,7 +59,6 @@ urlpatterns = [
     path("register/", views.registerPage, name="registerPage"),
     path("payment/<int:showing>/", views.payment, name="payment"),
     path("rep_payment/<int:showing>/", views.rep_payment, name="rep_payment"),
-    path("pay_with_card/", views.pay_with_card, name="pay_with_card"),
     path("view_accounts/", views.view_accounts, name="view_accounts"),
     path("daily_transactions/", views.daily_transactions, name="daily_transactions"),
     path("customer_statements/", views.customer_statements, name="customer_statements"),
@@ -89,4 +88,8 @@ urlpatterns = [
     path("add_showing/", views.add_showing, name="add_showing"),
     path('edit_showing/<int:showing_id>/', views.edit_showing, name='edit_showing'),
     path('delete_showing/<int:showing_id>', views.delete_showing, name='delete_showing'),
+    path('config/', views.stripe_config),
+    path('create-checkout-session/', views.create_checkout_session),
+    path('cancelled/', views.CancelledView.as_view()),
+    path('handle_nopay_option/', views.handle_nopay_option),
 ]
