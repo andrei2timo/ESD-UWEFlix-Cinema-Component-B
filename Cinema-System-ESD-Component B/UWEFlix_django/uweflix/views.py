@@ -1037,7 +1037,11 @@ def specific_screen_endpoint(request, pk):
         screen.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-### TODO: Comment me
+# This is a Django Rest Framework API class created as a view that handles GET, and POST requests for a specific Screen 
+# object identified by its primary key (pk). What makes this class different from the API view above is that a GET
+# request to this class' endpoint will render a Screen detail form, letting the user edit screen details. Pressing submit 
+# on this form activates the POST method and updates the screen. This is an example of how the Django REST Framework can 
+# be integrated into the user interface for updating models
 
 class ScreenDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
